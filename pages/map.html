@@ -1,0 +1,1776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop World Map - Save the Poop!</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="page-styles.css">
+    <style>
+        .world-map {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 600px;
+            margin: 20px auto;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 6px solid #5D4037;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.3), 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        /* Sky gradient */
+        .sky-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 45%;
+            background: linear-gradient(to bottom,
+                #1a237e 0%,
+                #3949ab 20%,
+                #5c6bc0 40%,
+                #7986cb 60%,
+                #9fa8da 80%,
+                #c5cae9 100%
+            );
+        }
+
+        /* Clouds */
+        .cloud {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            opacity: 0.9;
+            filter: blur(2px);
+        }
+
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+        }
+
+        .cloud-1 {
+            width: 80px; height: 30px;
+            top: 8%; left: 10%;
+            animation: cloud-move 40s linear infinite;
+        }
+        .cloud-1::before { width: 40px; height: 40px; top: -20px; left: 10px; }
+        .cloud-1::after { width: 50px; height: 50px; top: -30px; left: 30px; }
+
+        .cloud-2 {
+            width: 100px; height: 35px;
+            top: 15%; left: 60%;
+            animation: cloud-move 50s linear infinite reverse;
+        }
+        .cloud-2::before { width: 50px; height: 50px; top: -25px; left: 15px; }
+        .cloud-2::after { width: 60px; height: 60px; top: -35px; left: 40px; }
+
+        .cloud-3 {
+            width: 60px; height: 25px;
+            top: 5%; left: 40%;
+            animation: cloud-move 35s linear infinite;
+        }
+        .cloud-3::before { width: 35px; height: 35px; top: -18px; left: 8px; }
+        .cloud-3::after { width: 40px; height: 40px; top: -22px; left: 25px; }
+
+        @keyframes cloud-move {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(50px); }
+        }
+
+        /* Sun */
+        .sun {
+            position: absolute;
+            top: 30px;
+            right: 60px;
+            width: 70px;
+            height: 70px;
+            background: radial-gradient(circle, #fff9c4 0%, #ffee58 40%, #fdd835 70%, #f9a825 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 60px #ffeb3b, 0 0 100px #ffc107;
+            animation: sun-glow 4s ease-in-out infinite;
+        }
+
+        .sun::before {
+            content: '';
+            position: absolute;
+            top: -20px; left: -20px;
+            right: -20px; bottom: -20px;
+            background: radial-gradient(circle, rgba(255,235,59,0.3) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        @keyframes sun-glow {
+            0%, 100% { box-shadow: 0 0 60px #ffeb3b, 0 0 100px #ffc107; }
+            50% { box-shadow: 0 0 80px #ffeb3b, 0 0 120px #ffc107; }
+        }
+
+        /* Ground layers */
+        .ground-layer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(to bottom,
+                #a5d6a7 0%,
+                #81c784 20%,
+                #66bb6a 50%,
+                #4caf50 80%,
+                #388e3c 100%
+            );
+        }
+
+        /* River */
+        .river {
+            position: absolute;
+            bottom: 10%;
+            left: 0;
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(to bottom, #4fc3f7, #29b6f6, #03a9f4);
+            clip-path: polygon(0% 50%, 5% 30%, 15% 60%, 25% 40%, 35% 70%, 45% 35%, 55% 65%, 65% 30%, 75% 55%, 85% 40%, 95% 60%, 100% 45%, 100% 100%, 0% 100%);
+        }
+
+        .river::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background: repeating-linear-gradient(90deg,
+                transparent 0px,
+                rgba(255,255,255,0.3) 20px,
+                transparent 40px
+            );
+            animation: river-flow 3s linear infinite;
+        }
+
+        @keyframes river-flow {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Bridge */
+        .bridge {
+            position: absolute;
+            bottom: 12%;
+            left: 45%;
+            width: 80px;
+            height: 50px;
+        }
+
+        .bridge-deck {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(to bottom, #8d6e63, #6d4c41);
+            border-radius: 3px;
+        }
+
+        .bridge-rail {
+            position: absolute;
+            bottom: 32px;
+            width: 100%;
+            height: 15px;
+            border: 3px solid #5d4037;
+            border-bottom: none;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .bridge-post {
+            position: absolute;
+            bottom: 0;
+            width: 8px;
+            height: 35px;
+            background: linear-gradient(90deg, #6d4c41, #8d6e63, #6d4c41);
+        }
+
+        .bridge-post.left { left: 5px; }
+        .bridge-post.right { right: 5px; }
+
+        /* Roads */
+        .road {
+            position: absolute;
+            background: linear-gradient(to bottom, #616161, #757575, #616161);
+            border: 2px solid #424242;
+        }
+
+        .road::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: repeating-linear-gradient(90deg, #ffeb3b 0px, #ffeb3b 20px, transparent 20px, transparent 40px);
+            transform: translateY(-50%);
+        }
+
+        .road-main {
+            bottom: 25%;
+            left: 10%;
+            width: 80%;
+            height: 20px;
+            border-radius: 3px;
+        }
+
+        .road-v1 {
+            bottom: 25%;
+            left: 25%;
+            width: 20px;
+            height: 120px;
+            border-radius: 3px;
+        }
+
+        .road-v1::before {
+            width: 3px;
+            height: 100%;
+            left: 50%;
+            top: 0;
+            background: repeating-linear-gradient(180deg, #ffeb3b 0px, #ffeb3b 20px, transparent 20px, transparent 40px);
+        }
+
+        .road-v2 {
+            bottom: 25%;
+            right: 25%;
+            width: 20px;
+            height: 150px;
+            border-radius: 3px;
+        }
+
+        .road-v2::before {
+            width: 3px;
+            height: 100%;
+            left: 50%;
+            top: 0;
+            background: repeating-linear-gradient(180deg, #ffeb3b 0px, #ffeb3b 20px, transparent 20px, transparent 40px);
+        }
+
+        /* ============ MOUNT POOP ============ */
+        .mount-poop {
+            position: absolute;
+            left: 3%;
+            top: 15%;
+            cursor: pointer;
+            transition: transform 0.3s, filter 0.3s;
+            filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.3));
+        }
+
+        .mount-poop:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(5px 5px 15px rgba(0,0,0,0.5));
+        }
+
+        .mountain-back {
+            position: absolute;
+            left: 30px;
+            top: 20px;
+            width: 0;
+            height: 0;
+            border-left: 70px solid transparent;
+            border-right: 70px solid transparent;
+            border-bottom: 130px solid #5d4037;
+        }
+
+        .mountain-main {
+            position: relative;
+            width: 0;
+            height: 0;
+            border-left: 90px solid transparent;
+            border-right: 90px solid transparent;
+            border-bottom: 160px solid #6d4c41;
+        }
+
+        .mountain-snow {
+            position: absolute;
+            top: 0;
+            left: -35px;
+            width: 0;
+            height: 0;
+            border-left: 35px solid transparent;
+            border-right: 35px solid transparent;
+            border-bottom: 50px solid #fff;
+        }
+
+        .mountain-snow::before {
+            content: '';
+            position: absolute;
+            top: 35px;
+            left: -45px;
+            width: 90px;
+            height: 20px;
+            background: linear-gradient(to bottom, #fff, transparent);
+            clip-path: polygon(0% 0%, 20% 100%, 50% 30%, 80% 100%, 100% 0%);
+        }
+
+        .mountain-detail {
+            position: absolute;
+            top: 60px;
+            left: -60px;
+            width: 120px;
+            height: 80px;
+            background: linear-gradient(135deg, transparent 40%, rgba(0,0,0,0.1) 50%, transparent 60%);
+        }
+
+        .mountain-trees {
+            position: absolute;
+            bottom: -10px;
+            left: -80px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .pine-tree {
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 30px solid #2e7d32;
+            position: relative;
+        }
+
+        .pine-tree::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: -12px;
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-bottom: 35px solid #388e3c;
+        }
+
+        .pine-tree::after {
+            content: '';
+            position: absolute;
+            top: 35px;
+            left: -3px;
+            width: 6px;
+            height: 15px;
+            background: #5d4037;
+        }
+
+        .poop-statue {
+            position: absolute;
+            top: -25px;
+            left: -20px;
+            width: 40px;
+            height: 35px;
+        }
+
+        .poop-swirl {
+            position: absolute;
+            background: linear-gradient(135deg, #8d6e63, #6d4c41, #5d4037);
+            border-radius: 50%;
+        }
+
+        .poop-swirl-1 { width: 15px; height: 15px; top: 0; left: 12px; }
+        .poop-swirl-2 { width: 25px; height: 12px; top: 10px; left: 7px; }
+        .poop-swirl-3 { width: 35px; height: 15px; top: 18px; left: 2px; }
+
+        /* ============ POOP HOSPITAL ============ */
+        .poop-hospital {
+            position: absolute;
+            right: 5%;
+            top: 18%;
+            cursor: pointer;
+            transition: transform 0.3s, filter 0.3s;
+            filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.3));
+        }
+
+        .poop-hospital:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(5px 5px 15px rgba(0,0,0,0.5));
+        }
+
+        .hospital-main {
+            position: relative;
+            width: 150px;
+            height: 110px;
+            background: linear-gradient(135deg, #fff 0%, #f5f5f5 50%, #e0e0e0 100%);
+            border: 3px solid #b0bec5;
+            border-radius: 8px;
+        }
+
+        .hospital-roof {
+            position: absolute;
+            top: -25px;
+            left: -10px;
+            width: 170px;
+            height: 30px;
+            background: linear-gradient(to bottom, #c62828, #b71c1c);
+            border-radius: 5px 5px 0 0;
+        }
+
+        .hospital-cross {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            background: #c62828;
+            clip-path: polygon(35% 0%, 65% 0%, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0% 65%, 0% 35%, 35% 35%);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .hospital-windows {
+            position: absolute;
+            top: 70px;
+            left: 10px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .hospital-window {
+            width: 25px;
+            height: 30px;
+            background: linear-gradient(135deg, #81d4fa, #4fc3f7);
+            border: 3px solid #b0bec5;
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .hospital-window::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #b0bec5;
+        }
+
+        .hospital-window::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 2px;
+            height: 100%;
+            background: #b0bec5;
+        }
+
+        .hospital-door {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 35px;
+            height: 45px;
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            border-radius: 5px 5px 0 0;
+            border: 3px solid #0d47a1;
+            border-bottom: none;
+        }
+
+        .hospital-door::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 5px;
+            width: 6px;
+            height: 6px;
+            background: #ffd54f;
+            border-radius: 50%;
+        }
+
+        .ambulance {
+            position: absolute;
+            bottom: -35px;
+            right: -20px;
+            width: 60px;
+            height: 30px;
+        }
+
+        .ambulance-body {
+            position: absolute;
+            bottom: 5px;
+            width: 55px;
+            height: 22px;
+            background: linear-gradient(to bottom, #fff, #f5f5f5);
+            border: 2px solid #e0e0e0;
+            border-radius: 3px;
+        }
+
+        .ambulance-cabin {
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            width: 20px;
+            height: 22px;
+            background: linear-gradient(to bottom, #fff, #e3f2fd);
+            border: 2px solid #e0e0e0;
+            border-radius: 3px 0 0 3px;
+        }
+
+        .ambulance-light {
+            position: absolute;
+            top: -5px;
+            left: 25px;
+            width: 12px;
+            height: 6px;
+            background: #f44336;
+            border-radius: 3px;
+            animation: ambulance-flash 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes ambulance-flash {
+            0% { background: #f44336; box-shadow: 0 0 5px #f44336; }
+            100% { background: #2196f3; box-shadow: 0 0 5px #2196f3; }
+        }
+
+        .ambulance-cross {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 12px;
+            height: 12px;
+            background: #f44336;
+            clip-path: polygon(35% 0%, 65% 0%, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0% 65%, 0% 35%, 35% 35%);
+        }
+
+        .ambulance-wheel {
+            position: absolute;
+            bottom: 0;
+            width: 10px;
+            height: 10px;
+            background: #333;
+            border-radius: 50%;
+            border: 2px solid #666;
+        }
+
+        .ambulance-wheel.front { left: 5px; }
+        .ambulance-wheel.back { right: 8px; }
+
+        /* ============ POOP LAND CASTLE ============ */
+        .poop-land {
+            position: absolute;
+            left: 38%;
+            top: 22%;
+            cursor: pointer;
+            transition: transform 0.3s, filter 0.3s;
+            filter: drop-shadow(5px 5px 10px rgba(0,0,0,0.3));
+        }
+
+        .poop-land:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(5px 5px 15px rgba(0,0,0,0.5));
+        }
+
+        .castle-base {
+            position: relative;
+            width: 120px;
+            height: 90px;
+            background: linear-gradient(135deg, #7b1fa2, #6a1b9a, #4a148c);
+            border: 3px solid #38006b;
+            border-radius: 5px;
+        }
+
+        .castle-tower {
+            position: absolute;
+            bottom: 100%;
+            width: 30px;
+            height: 60px;
+            background: linear-gradient(135deg, #8e24aa, #7b1fa2);
+            border: 3px solid #38006b;
+            border-bottom: none;
+        }
+
+        .castle-tower.left { left: 5px; }
+        .castle-tower.center { left: 50%; transform: translateX(-50%); height: 80px; width: 35px; }
+        .castle-tower.right { right: 5px; }
+
+        .castle-roof {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 22px solid transparent;
+            border-right: 22px solid transparent;
+            border-bottom: 25px solid #e91e63;
+        }
+
+        .castle-tower.center .castle-roof {
+            top: -25px;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 30px solid #e91e63;
+        }
+
+        .castle-flag {
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .flag-pole {
+            width: 3px;
+            height: 25px;
+            background: linear-gradient(90deg, #8d6e63, #a1887f, #8d6e63);
+        }
+
+        .flag-cloth {
+            position: absolute;
+            top: 0;
+            left: 3px;
+            width: 20px;
+            height: 12px;
+            background: linear-gradient(135deg, #ffd54f, #ffb300);
+            clip-path: polygon(0% 0%, 100% 0%, 80% 50%, 100% 100%, 0% 100%);
+            animation: flag-wave 1s ease-in-out infinite;
+        }
+
+        @keyframes flag-wave {
+            0%, 100% { transform: skewY(0deg); }
+            50% { transform: skewY(-5deg); }
+        }
+
+        .castle-gate {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 45px;
+            background: linear-gradient(135deg, #3e2723, #4e342e);
+            border-radius: 15px 15px 0 0;
+            border: 3px solid #1b0000;
+            border-bottom: none;
+        }
+
+        .castle-gate::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 25px;
+            background: repeating-linear-gradient(0deg, #5d4037 0px, #5d4037 3px, #3e2723 3px, #3e2723 6px);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .castle-window {
+            position: absolute;
+            width: 15px;
+            height: 20px;
+            background: linear-gradient(135deg, #ffeb3b, #ffc107);
+            border: 2px solid #38006b;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .castle-window.w1 { top: 20px; left: 15px; }
+        .castle-window.w2 { top: 20px; right: 15px; }
+
+        /* Location labels */
+        .location-label {
+            position: absolute;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #fff9c4, #fff59d);
+            padding: 6px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #5d4037;
+            white-space: nowrap;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            border: 2px solid #fbc02d;
+        }
+
+        /* Decorative trees */
+        .tree-group {
+            position: absolute;
+            display: flex;
+            gap: 5px;
+        }
+
+        .deciduous-tree {
+            position: relative;
+            width: 30px;
+            height: 50px;
+        }
+
+        .tree-trunk {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 20px;
+            background: linear-gradient(90deg, #6d4c41, #8d6e63, #6d4c41);
+            border-radius: 2px;
+        }
+
+        .tree-crown {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 35px;
+            background: radial-gradient(ellipse, #66bb6a 0%, #43a047 50%, #2e7d32 100%);
+            border-radius: 50% 50% 45% 45%;
+        }
+
+        .tree-group-1 { left: 5%; bottom: 35%; }
+        .tree-group-2 { right: 3%; bottom: 40%; }
+        .tree-group-3 { left: 55%; bottom: 5%; }
+
+        /* Flowers */
+        .flower-patch {
+            position: absolute;
+            display: flex;
+            gap: 8px;
+        }
+
+        .flower {
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, #fff 30%, #e91e63 30%, #e91e63 60%, transparent 60%);
+            border-radius: 50%;
+        }
+
+        .flower.yellow {
+            background: radial-gradient(circle, #fff 30%, #ffc107 30%, #ffc107 60%, transparent 60%);
+        }
+
+        .flower-patch-1 { left: 15%; bottom: 20%; }
+        .flower-patch-2 { right: 20%; bottom: 18%; }
+
+        /* Stats bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: linear-gradient(135deg, #fff8e1, #ffecb3);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 3px solid #ffc107;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: #6d4c41;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #5d4037;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: linear-gradient(135deg, #fff, #fafafa);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 550px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            border: 3px solid #e0e0e0;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #ef5350, #e53935);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .modal-close:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            color: #c62828;
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .title-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ef5350, #c62828);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .title-cross {
+            width: 20px;
+            height: 20px;
+            background: white;
+            clip-path: polygon(35% 0%, 65% 0%, 65% 35%, 100% 35%, 100% 65%, 65% 65%, 65% 100%, 35% 100%, 35% 65%, 0% 65%, 0% 35%, 35% 35%);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e0e0e0;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #66bb6a, #43a047);
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        .lives-display {
+            text-align: center;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .heart {
+            width: 25px;
+            height: 25px;
+            background: #e53935;
+            clip-path: path('M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+            transform: scale(1.2);
+        }
+
+        .heart.empty {
+            background: #bdbdbd;
+        }
+
+        .patient-area {
+            text-align: center;
+            padding: 25px;
+            background: linear-gradient(135deg, #fafafa, #f5f5f5);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .sick-poop-visual {
+            width: 100px;
+            height: 90px;
+            margin: 0 auto 15px;
+            position: relative;
+        }
+
+        .poop-body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .poop-layer {
+            position: absolute;
+            background: linear-gradient(135deg, #8d6e63, #6d4c41, #5d4037);
+            border-radius: 50%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .poop-layer-1 { width: 30px; height: 25px; top: 0; }
+        .poop-layer-2 { width: 50px; height: 22px; top: 18px; }
+        .poop-layer-3 { width: 70px; height: 25px; top: 35px; }
+        .poop-layer-4 { width: 90px; height: 30px; top: 55px; }
+
+        .poop-face {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 40px;
+        }
+
+        .poop-eye {
+            position: absolute;
+            width: 12px;
+            height: 14px;
+            background: white;
+            border-radius: 50%;
+            top: 5px;
+        }
+
+        .poop-eye.left { left: 10px; }
+        .poop-eye.right { right: 10px; }
+
+        .poop-eye::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #333;
+            border-radius: 50%;
+            top: 4px;
+            left: 3px;
+        }
+
+        .poop-mouth {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 10px;
+            background: #5d4037;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .sick-poop-visual.sick .poop-layer {
+            background: linear-gradient(135deg, #a5d6a7, #81c784, #66bb6a);
+        }
+
+        .sick-poop-visual.sick .poop-eye::after {
+            animation: dizzy-eyes 0.5s ease-in-out infinite;
+        }
+
+        @keyframes dizzy-eyes {
+            0%, 100% { transform: translateX(-2px); }
+            50% { transform: translateX(2px); }
+        }
+
+        .sick-poop-visual.healthy .poop-layer {
+            background: linear-gradient(135deg, #8d6e63, #6d4c41, #5d4037);
+        }
+
+        .sick-poop-visual.healthy {
+            animation: happy-bounce 0.5s ease-in-out infinite;
+        }
+
+        @keyframes happy-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .sweat-drop {
+            position: absolute;
+            top: 10px;
+            right: 5px;
+            width: 8px;
+            height: 12px;
+            background: #81d4fa;
+            border-radius: 50% 50% 50% 50% / 30% 30% 70% 70%;
+            animation: sweat-drip 1s ease-in-out infinite;
+        }
+
+        @keyframes sweat-drip {
+            0%, 100% { opacity: 1; transform: translateY(0); }
+            50% { opacity: 0.5; transform: translateY(5px); }
+        }
+
+        .diagnosis {
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border-left: 5px solid #ff9800;
+        }
+
+        .diagnosis-title {
+            font-weight: bold;
+            color: #e65100;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .symptoms {
+            color: #5d4037;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .medicine-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .medicine-btn {
+            padding: 15px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #fff, #fafafa);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .medicine-btn:hover {
+            border-color: #2196f3;
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+        }
+
+        .medicine-btn.correct {
+            border-color: #4caf50;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            animation: correct-pulse 0.5s ease;
+        }
+
+        .medicine-btn.wrong {
+            border-color: #f44336;
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+            animation: wrong-shake 0.5s ease;
+        }
+
+        @keyframes correct-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        @keyframes wrong-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
+        }
+
+        .medicine-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 10px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .pill-icon {
+            width: 35px;
+            height: 18px;
+            background: linear-gradient(90deg, #e91e63 50%, #fff 50%);
+            border-radius: 10px;
+            border: 2px solid #c2185b;
+        }
+
+        .bottle-icon {
+            width: 20px;
+            height: 35px;
+            background: linear-gradient(135deg, #4fc3f7, #29b6f6);
+            border-radius: 3px 3px 8px 8px;
+            position: relative;
+        }
+
+        .bottle-icon::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 10px;
+            background: #0288d1;
+            border-radius: 2px;
+        }
+
+        .syringe-icon {
+            width: 40px;
+            height: 12px;
+            background: linear-gradient(90deg, #90a4ae, #78909c);
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .syringe-icon::before {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 15px;
+            height: 4px;
+            background: #546e7a;
+        }
+
+        .tablet-icon {
+            width: 25px;
+            height: 25px;
+            background: radial-gradient(circle, #fff 30%, #9e9e9e 100%);
+            border-radius: 50%;
+            border: 2px solid #757575;
+        }
+
+        .medicine-name {
+            font-weight: bold;
+            color: #37474f;
+            font-size: 0.95rem;
+            margin-bottom: 5px;
+        }
+
+        .medicine-desc {
+            font-size: 0.8rem;
+            color: #78909c;
+        }
+
+        .result-message {
+            text-align: center;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            display: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .result-message.success {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            color: #2e7d32;
+            border: 2px solid #81c784;
+            display: block;
+        }
+
+        .result-message.fail {
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+            color: #c62828;
+            border: 2px solid #ef9a9a;
+            display: block;
+        }
+
+        .next-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 15px;
+            background: linear-gradient(135deg, #42a5f5, #1e88e5);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(30, 136, 229, 0.4);
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(30, 136, 229, 0.5);
+        }
+
+        /* Info popup */
+        .info-popup {
+            background: linear-gradient(135deg, #fff, #fafafa);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            border: 3px solid #e0e0e0;
+        }
+
+        .info-icon-container {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #8d6e63, #6d4c41);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .info-mountain-icon {
+            width: 50px;
+            height: 40px;
+            position: relative;
+        }
+
+        .mini-mountain {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 25px solid transparent;
+            border-right: 25px solid transparent;
+            border-bottom: 35px solid #a1887f;
+        }
+
+        .mini-snow {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-bottom: 12px solid #fff;
+        }
+
+        .info-title {
+            font-size: 1.6rem;
+            color: #5d4037;
+            margin-bottom: 15px;
+        }
+
+        .info-desc {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .info-btn {
+            padding: 12px 40px;
+            background: linear-gradient(135deg, #8d6e63, #6d4c41);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .info-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(109, 76, 65, 0.4);
+        }
+    </style>
+</head>
+<body class="page-body">
+    <a href="../index.html" class="back-button">Back to Poop</a>
+
+    <div class="page-container" style="max-width: 950px;">
+        <h1 class="page-title">Poop World Map</h1>
+
+        <div class="content-box">
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <div class="stat-label">Patients Saved</div>
+                    <div class="stat-value" id="poopsSaved">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Win Streak</div>
+                    <div class="stat-value" id="streak">0</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Doctor Level</div>
+                    <div class="stat-value" id="level">1</div>
+                </div>
+            </div>
+
+            <div class="world-map">
+                <!-- Sky -->
+                <div class="sky-layer"></div>
+                <div class="sun"></div>
+                <div class="cloud cloud-1"></div>
+                <div class="cloud cloud-2"></div>
+                <div class="cloud cloud-3"></div>
+
+                <!-- Ground -->
+                <div class="ground-layer"></div>
+
+                <!-- River -->
+                <div class="river"></div>
+
+                <!-- Bridge -->
+                <div class="bridge">
+                    <div class="bridge-rail"></div>
+                    <div class="bridge-deck"></div>
+                    <div class="bridge-post left"></div>
+                    <div class="bridge-post right"></div>
+                </div>
+
+                <!-- Roads -->
+                <div class="road road-main"></div>
+                <div class="road road-v1"></div>
+                <div class="road road-v2"></div>
+
+                <!-- Trees -->
+                <div class="tree-group tree-group-1">
+                    <div class="deciduous-tree"><div class="tree-trunk"></div><div class="tree-crown"></div></div>
+                    <div class="deciduous-tree"><div class="tree-trunk"></div><div class="tree-crown"></div></div>
+                </div>
+                <div class="tree-group tree-group-2">
+                    <div class="deciduous-tree"><div class="tree-trunk"></div><div class="tree-crown"></div></div>
+                </div>
+                <div class="tree-group tree-group-3">
+                    <div class="deciduous-tree"><div class="tree-trunk"></div><div class="tree-crown"></div></div>
+                    <div class="deciduous-tree"><div class="tree-trunk"></div><div class="tree-crown"></div></div>
+                </div>
+
+                <!-- Flowers -->
+                <div class="flower-patch flower-patch-1">
+                    <div class="flower"></div>
+                    <div class="flower yellow"></div>
+                    <div class="flower"></div>
+                </div>
+                <div class="flower-patch flower-patch-2">
+                    <div class="flower yellow"></div>
+                    <div class="flower"></div>
+                    <div class="flower yellow"></div>
+                </div>
+
+                <!-- Mount Poop -->
+                <div class="mount-poop" id="mountPoop">
+                    <div class="mountain-back"></div>
+                    <div class="mountain-main">
+                        <div class="mountain-snow"></div>
+                        <div class="mountain-detail"></div>
+                        <div class="poop-statue">
+                            <div class="poop-swirl poop-swirl-1"></div>
+                            <div class="poop-swirl poop-swirl-2"></div>
+                            <div class="poop-swirl poop-swirl-3"></div>
+                        </div>
+                    </div>
+                    <div class="mountain-trees">
+                        <div class="pine-tree"></div>
+                        <div class="pine-tree"></div>
+                        <div class="pine-tree"></div>
+                    </div>
+                    <div class="location-label">Mount Poop</div>
+                </div>
+
+                <!-- Poop Hospital -->
+                <div class="poop-hospital" id="poopHospital">
+                    <div class="hospital-roof"></div>
+                    <div class="hospital-main">
+                        <div class="hospital-cross"></div>
+                        <div class="hospital-windows">
+                            <div class="hospital-window"></div>
+                            <div class="hospital-window"></div>
+                            <div class="hospital-window"></div>
+                        </div>
+                        <div class="hospital-door"></div>
+                    </div>
+                    <div class="ambulance">
+                        <div class="ambulance-body">
+                            <div class="ambulance-cross"></div>
+                        </div>
+                        <div class="ambulance-cabin"></div>
+                        <div class="ambulance-light"></div>
+                        <div class="ambulance-wheel front"></div>
+                        <div class="ambulance-wheel back"></div>
+                    </div>
+                    <div class="location-label">Poop Hospital</div>
+                </div>
+
+                <!-- Poop Land Castle -->
+                <div class="poop-land" id="poopLandCastle">
+                    <div class="castle-base">
+                        <div class="castle-tower left">
+                            <div class="castle-roof"></div>
+                        </div>
+                        <div class="castle-tower center">
+                            <div class="castle-roof"></div>
+                            <div class="castle-flag">
+                                <div class="flag-pole"></div>
+                                <div class="flag-cloth"></div>
+                            </div>
+                        </div>
+                        <div class="castle-tower right">
+                            <div class="castle-roof"></div>
+                        </div>
+                        <div class="castle-window w1"></div>
+                        <div class="castle-window w2"></div>
+                        <div class="castle-gate"></div>
+                    </div>
+                    <div class="location-label">Poop Land</div>
+                </div>
+            </div>
+
+            <p style="text-align: center; color: #666; margin-top: 15px;">
+                Click on locations to explore! Visit the <strong>Poop Hospital</strong> to save sick patients!
+            </p>
+        </div>
+    </div>
+
+    <!-- Hospital Modal -->
+    <div class="modal-overlay" id="hospitalModal">
+        <div class="modal">
+            <button class="modal-close" id="closeModal">×</button>
+            <h2 class="modal-title">
+                <div class="title-icon"><div class="title-cross"></div></div>
+                Poop Hospital
+            </h2>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+
+            <div class="lives-display" id="livesDisplay">
+                <div class="heart"></div>
+                <div class="heart"></div>
+                <div class="heart"></div>
+            </div>
+
+            <div class="patient-area">
+                <div class="sick-poop-visual sick" id="sickPoopVisual">
+                    <div class="poop-body">
+                        <div class="poop-layer poop-layer-1"></div>
+                        <div class="poop-layer poop-layer-2"></div>
+                        <div class="poop-layer poop-layer-3"></div>
+                        <div class="poop-layer poop-layer-4"></div>
+                        <div class="poop-face">
+                            <div class="poop-eye left"></div>
+                            <div class="poop-eye right"></div>
+                            <div class="poop-mouth"></div>
+                        </div>
+                    </div>
+                    <div class="sweat-drop" id="sweatDrop"></div>
+                </div>
+                <p id="patientStatus" style="font-weight: bold; color: #5d4037;">A sick patient needs your help!</p>
+            </div>
+
+            <div class="diagnosis" id="diagnosis">
+                <div class="diagnosis-title">Medical Report:</div>
+                <div class="symptoms" id="symptoms">Loading patient information...</div>
+            </div>
+
+            <p style="text-align: center; font-weight: bold; color: #37474f; margin: 15px 0;">Select the correct treatment:</p>
+
+            <div class="medicine-options" id="medicineOptions"></div>
+
+            <div class="result-message" id="resultMessage"></div>
+
+            <button class="next-btn" id="nextBtn" style="display: none;">Next Patient</button>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div class="modal-overlay" id="infoOverlay">
+        <div class="info-popup">
+            <div class="info-icon-container" id="infoIconContainer">
+                <div class="info-mountain-icon">
+                    <div class="mini-mountain"></div>
+                    <div class="mini-snow"></div>
+                </div>
+            </div>
+            <div class="info-title" id="infoTitle">Mount Poop</div>
+            <div class="info-desc" id="infoDesc">Description here</div>
+            <button class="info-btn" id="infoBtn">Got it!</button>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        let poopsSaved = 0;
+        let streak = 0;
+        let level = 1;
+        let lives = 3;
+        let currentPatient = 0;
+        let totalPatients = 5;
+        let currentDisease = null;
+        let gameActive = false;
+
+        const diseases = [
+            {
+                name: "Acute Diarrhea",
+                symptoms: "Patient presents with frequent watery bowel movements, dehydration symptoms, and abdominal cramping. Onset was sudden after consuming street food.",
+                correctMedicine: "antidiarrheal",
+                hint: "This condition requires medication to slow intestinal motility."
+            },
+            {
+                name: "Severe Constipation",
+                symptoms: "Patient reports no bowel movement for 5 days. Abdominal distension present, with discomfort and bloating. Dietary fiber intake has been minimal.",
+                correctMedicine: "laxative",
+                hint: "Treatment should promote bowel movement and soften stool."
+            },
+            {
+                name: "Bacterial Gastroenteritis",
+                symptoms: "Patient has fever, vomiting, and bloody stool. Lab results indicate bacterial infection. Recent travel to tropical region noted.",
+                correctMedicine: "antibiotic",
+                hint: "Bacterial infections require antimicrobial treatment."
+            },
+            {
+                name: "Acute Food Poisoning",
+                symptoms: "Patient ingested contaminated shellfish 4 hours ago. Presenting with nausea, vomiting, and toxin-related symptoms. Requires detoxification.",
+                correctMedicine: "charcoal",
+                hint: "Activated substances can absorb toxins in the digestive tract."
+            },
+            {
+                name: "Severe Dehydration",
+                symptoms: "Patient shows signs of severe fluid loss: dry mouth, decreased urination, dizziness. Electrolyte imbalance confirmed via blood panel.",
+                correctMedicine: "electrolytes",
+                hint: "Fluid and mineral replacement is critical for this condition."
+            },
+            {
+                name: "Gastroesophageal Reflux",
+                symptoms: "Patient complains of burning sensation in chest and throat, especially after meals. Stomach acid levels are elevated. Chronic heartburn reported.",
+                correctMedicine: "antacid",
+                hint: "Neutralizing stomach acid will provide relief."
+            },
+            {
+                name: "Intestinal Gas Syndrome",
+                symptoms: "Patient presents with severe bloating, abdominal distension, and excessive flatulence. No structural abnormalities found. Discomfort is significant.",
+                correctMedicine: "antigas",
+                hint: "Treatment should help disperse and eliminate trapped gas."
+            },
+            {
+                name: "Intestinal Spasms",
+                symptoms: "Patient experiencing severe cramping and spasmodic pain in the intestinal region. Muscles are involuntarily contracting. Stress-related onset suspected.",
+                correctMedicine: "antispasmodic",
+                hint: "Muscle relaxants targeting smooth muscle will help."
+            }
+        ];
+
+        const medicines = [
+            { id: "antidiarrheal", name: "Anti-Diarrheal", icon: "pill", desc: "Reduces intestinal motility" },
+            { id: "laxative", name: "Laxative", icon: "bottle", desc: "Promotes bowel movement" },
+            { id: "antibiotic", name: "Antibiotic", icon: "syringe", desc: "Fights bacterial infection" },
+            { id: "charcoal", name: "Activated Charcoal", icon: "tablet", desc: "Absorbs toxins" },
+            { id: "electrolytes", name: "Electrolyte Solution", icon: "bottle", desc: "Restores fluid balance" },
+            { id: "antacid", name: "Antacid", icon: "tablet", desc: "Neutralizes stomach acid" },
+            { id: "antigas", name: "Anti-Gas Medication", icon: "pill", desc: "Relieves bloating" },
+            { id: "antispasmodic", name: "Antispasmodic", icon: "pill", desc: "Relaxes muscle spasms" }
+        ];
+
+        function getIconHTML(iconType) {
+            switch(iconType) {
+                case 'pill': return '<div class="medicine-icon"><div class="pill-icon"></div></div>';
+                case 'bottle': return '<div class="medicine-icon"><div class="bottle-icon"></div></div>';
+                case 'syringe': return '<div class="medicine-icon"><div class="syringe-icon"></div></div>';
+                case 'tablet': return '<div class="medicine-icon"><div class="tablet-icon"></div></div>';
+                default: return '<div class="medicine-icon"><div class="pill-icon"></div></div>';
+            }
+        }
+
+        // DOM Elements
+        const hospitalModal = document.getElementById('hospitalModal');
+        const sickPoopVisual = document.getElementById('sickPoopVisual');
+        const sweatDrop = document.getElementById('sweatDrop');
+        const patientStatus = document.getElementById('patientStatus');
+        const symptoms = document.getElementById('symptoms');
+        const medicineOptions = document.getElementById('medicineOptions');
+        const resultMessage = document.getElementById('resultMessage');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressFill = document.getElementById('progressFill');
+        const livesDisplay = document.getElementById('livesDisplay');
+        const infoOverlay = document.getElementById('infoOverlay');
+
+        // Event Listeners
+        document.getElementById('poopHospital').addEventListener('click', startHospitalGame);
+        document.getElementById('closeModal').addEventListener('click', closeHospitalModal);
+        hospitalModal.addEventListener('click', (e) => { if (e.target === hospitalModal) closeHospitalModal(); });
+
+        document.getElementById('mountPoop').addEventListener('click', () => {
+            document.getElementById('infoTitle').textContent = 'Mount Poop';
+            document.getElementById('infoDesc').textContent = 'The legendary Mount Poop rises 12,000 feet above sea level. Ancient legends speak of a golden artifact hidden at its peak. The mountain trails are treacherous, with unpredictable weather and steep cliffs. Only the bravest adventurers dare to climb. Coming soon: Mountain Expedition Adventure!';
+            infoOverlay.classList.add('active');
+        });
+
+        document.getElementById('poopLandCastle').addEventListener('click', () => {
+            document.getElementById('infoTitle').textContent = 'Poop Land Kingdom';
+            document.getElementById('infoDesc').textContent = 'The magnificent Poop Land Castle has stood for over 500 years. Home to the royal family and the famous theme park, it welcomes millions of visitors annually. The castle features 127 rooms, secret passages, and the world-renowned Poop Coaster. Visit the Poop Land door on the main page to enter!';
+            infoOverlay.classList.add('active');
+        });
+
+        document.getElementById('infoBtn').addEventListener('click', () => infoOverlay.classList.remove('active'));
+        infoOverlay.addEventListener('click', (e) => { if (e.target === infoOverlay) infoOverlay.classList.remove('active'); });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentPatient >= totalPatients || lives <= 0) {
+                resetGame();
+            }
+            loadNextPatient();
+        });
+
+        function startHospitalGame() {
+            currentPatient = 0;
+            lives = 3;
+            gameActive = true;
+            hospitalModal.classList.add('active');
+            updateLivesDisplay();
+            loadNextPatient();
+        }
+
+        function closeHospitalModal() {
+            hospitalModal.classList.remove('active');
+            gameActive = false;
+        }
+
+        function loadNextPatient() {
+            if (currentPatient >= totalPatients) {
+                endGame(true);
+                return;
+            }
+            if (lives <= 0) {
+                endGame(false);
+                return;
+            }
+
+            currentDisease = diseases[Math.floor(Math.random() * diseases.length)];
+
+            sickPoopVisual.className = 'sick-poop-visual sick';
+            sweatDrop.style.display = 'block';
+            patientStatus.textContent = `Patient ${currentPatient + 1} of ${totalPatients}: ${currentDisease.name}`;
+            symptoms.textContent = currentDisease.symptoms;
+
+            progressFill.style.width = (currentPatient / totalPatients * 100) + '%';
+
+            generateMedicineOptions();
+
+            resultMessage.style.display = 'none';
+            resultMessage.className = 'result-message';
+            nextBtn.style.display = 'none';
+
+            document.querySelectorAll('.medicine-btn').forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('correct', 'wrong');
+            });
+        }
+
+        function generateMedicineOptions() {
+            const correctMed = medicines.find(m => m.id === currentDisease.correctMedicine);
+            const wrongMeds = medicines.filter(m => m.id !== currentDisease.correctMedicine);
+            const shuffledWrong = wrongMeds.sort(() => Math.random() - 0.5).slice(0, 3);
+            const options = [correctMed, ...shuffledWrong].sort(() => Math.random() - 0.5);
+
+            medicineOptions.innerHTML = options.map(med => `
+                <button class="medicine-btn" data-medicine="${med.id}" onclick="selectMedicine('${med.id}')">
+                    ${getIconHTML(med.icon)}
+                    <div class="medicine-name">${med.name}</div>
+                    <div class="medicine-desc">${med.desc}</div>
+                </button>
+            `).join('');
+        }
+
+        function selectMedicine(medicineId) {
+            if (!gameActive) return;
+
+            document.querySelectorAll('.medicine-btn').forEach(btn => btn.disabled = true);
+
+            const selectedBtn = document.querySelector(`[data-medicine="${medicineId}"]`);
+            const correctBtn = document.querySelector(`[data-medicine="${currentDisease.correctMedicine}"]`);
+
+            if (medicineId === currentDisease.correctMedicine) {
+                selectedBtn.classList.add('correct');
+                sickPoopVisual.className = 'sick-poop-visual healthy';
+                sweatDrop.style.display = 'none';
+                resultMessage.innerHTML = '<strong>Correct diagnosis!</strong> The patient is recovering well.';
+                resultMessage.className = 'result-message success';
+
+                poopsSaved++;
+                streak++;
+                updateStats();
+            } else {
+                selectedBtn.classList.add('wrong');
+                correctBtn.classList.add('correct');
+                resultMessage.innerHTML = `<strong>Incorrect treatment.</strong> The correct medication was ${correctBtn.querySelector('.medicine-name').textContent}. <em>${currentDisease.hint}</em>`;
+                resultMessage.className = 'result-message fail';
+
+                lives--;
+                streak = 0;
+                updateLivesDisplay();
+                updateStats();
+            }
+
+            currentPatient++;
+            nextBtn.style.display = 'block';
+            nextBtn.textContent = currentPatient >= totalPatients ? 'View Results' : 'Next Patient';
+        }
+
+        function updateLivesDisplay() {
+            livesDisplay.innerHTML = '';
+            for (let i = 0; i < 3; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart' + (i >= lives ? ' empty' : '');
+                livesDisplay.appendChild(heart);
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('poopsSaved').textContent = poopsSaved;
+            document.getElementById('streak').textContent = streak;
+            level = Math.floor(poopsSaved / 5) + 1;
+            document.getElementById('level').textContent = level;
+        }
+
+        function endGame(won) {
+            gameActive = false;
+            progressFill.style.width = '100%';
+
+            if (won) {
+                sickPoopVisual.className = 'sick-poop-visual healthy';
+                sweatDrop.style.display = 'none';
+                patientStatus.textContent = 'Shift Complete!';
+                symptoms.textContent = 'Excellent work, Doctor. All patients have been treated successfully.';
+                resultMessage.innerHTML = `<strong>Outstanding performance!</strong> You saved all ${totalPatients} patients this shift. Your medical expertise is impressive!`;
+                resultMessage.className = 'result-message success';
+            } else {
+                patientStatus.textContent = 'Shift Ended';
+                symptoms.textContent = 'Unfortunately, too many incorrect treatments were administered.';
+                resultMessage.innerHTML = `You treated ${currentPatient - (3 - lives)} patients before the shift ended. Study the symptoms more carefully and try again!`;
+                resultMessage.className = 'result-message fail';
+            }
+
+            medicineOptions.innerHTML = '';
+            nextBtn.style.display = 'block';
+            nextBtn.textContent = 'Start New Shift';
+        }
+
+        function resetGame() {
+            currentPatient = 0;
+            lives = 3;
+            gameActive = true;
+            updateLivesDisplay();
+        }
+
+        window.selectMedicine = selectMedicine;
+    </script>
+</body>
+</html>

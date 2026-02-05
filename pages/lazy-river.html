@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pee Lazy River - Dodge the Poopy Obstacles!</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="page-styles.css">
+    <style>
+        .game-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            height: 450px;
+            margin: 20px auto;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 5px solid #8B4513;
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 30%, #FFE066 30%, #FFCC00 100%);
+        }
+
+        .river-layer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70%;
+            background: linear-gradient(to bottom, #FFE066 0%, #FFCC00 50%, #FFB800 100%);
+        }
+
+        .wave {
+            position: absolute;
+            width: 200%;
+            height: 20px;
+            background: repeating-linear-gradient(
+                90deg,
+                rgba(255,255,255,0.3) 0px,
+                rgba(255,255,255,0.5) 30px,
+                rgba(255,255,255,0.3) 60px
+            );
+            animation: wave-scroll 1.5s linear infinite;
+        }
+
+        .wave1 { top: 0; }
+        .wave2 { top: 40px; animation-delay: -0.5s; opacity: 0.7; }
+        .wave3 { top: 80px; animation-delay: -1s; opacity: 0.5; }
+
+        @keyframes wave-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .player {
+            position: absolute;
+            left: 80px;
+            font-size: 3rem;
+            z-index: 100;
+            transition: transform 0.1s;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.3));
+        }
+
+        .player.boosting {
+            transform: rotate(-15deg);
+        }
+
+        .player.falling {
+            transform: rotate(15deg);
+        }
+
+        .obstacle {
+            position: absolute;
+            font-size: 2.5rem;
+            z-index: 50;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .collectible {
+            position: absolute;
+            font-size: 2rem;
+            z-index: 50;
+            animation: sparkle 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes sparkle {
+            0% { transform: scale(1); filter: brightness(1); }
+            100% { transform: scale(1.1); filter: brightness(1.3); }
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            background: #FFF8DC;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .score-item {
+            text-align: center;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .score-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #8B4513;
+        }
+
+        .game-over-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 200;
+        }
+
+        .game-over-screen.active {
+            display: flex;
+        }
+
+        .game-over-screen h2 {
+            font-size: 2.5rem;
+            color: #FF6B6B;
+            margin-bottom: 10px;
+        }
+
+        .final-score {
+            font-size: 2.5rem;
+            color: #FFD700;
+            margin: 15px 0;
+        }
+
+        .game-controls {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .game-btn {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-family: inherit;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+        }
+
+        .game-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .start-btn {
+            background: linear-gradient(145deg, #55EFC4, #00B894);
+            color: white;
+            box-shadow: 0 5px 15px rgba(0,184,148,0.4);
+        }
+
+        .instructions {
+            background: #FFF8DC;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .instructions h3 {
+            color: #8B4513;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+        }
+
+        .instructions li {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .sun {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 3rem;
+            animation: sun-pulse 3s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes sun-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .cloud {
+            position: absolute;
+            font-size: 2rem;
+            z-index: 5;
+            animation: cloud-move 8s linear infinite;
+        }
+
+        @keyframes cloud-move {
+            0% { transform: translateX(750px); }
+            100% { transform: translateX(-100px); }
+        }
+
+        .splash-effect {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: splash-anim 0.4s ease-out forwards;
+            pointer-events: none;
+            z-index: 150;
+        }
+
+        @keyframes splash-anim {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(2) translateY(-20px); }
+        }
+
+        .distance-display {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255,255,255,0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #8B4513;
+            z-index: 100;
+        }
+
+        .coin-display {
+            position: absolute;
+            top: 10px;
+            right: 60px;
+            background: rgba(255,255,255,0.9);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #8B4513;
+            z-index: 100;
+        }
+
+        .height-indicator {
+            position: absolute;
+            left: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 200px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            z-index: 100;
+        }
+
+        .height-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: linear-gradient(to top, #00B894, #55EFC4);
+            border-radius: 4px;
+            transition: height 0.1s;
+        }
+
+        .float-selector {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .float-option {
+            font-size: 2.5rem;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 15px;
+            border: 3px solid transparent;
+            transition: all 0.2s;
+            background: rgba(255,255,255,0.5);
+        }
+
+        .float-option:hover {
+            background: rgba(255,255,255,0.8);
+            transform: scale(1.1);
+        }
+
+        .float-option.selected {
+            border-color: #FFD700;
+            background: rgba(255,215,0,0.3);
+        }
+
+        .warning-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,0,0,0.3);
+            z-index: 90;
+            animation: flash-warn 0.2s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes flash-warn {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .combo-display {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #FFD700;
+            text-shadow: 2px 2px 0 #8B4513;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .combo-display.active {
+            opacity: 1;
+            animation: combo-bounce 0.3s ease-out;
+        }
+
+        @keyframes combo-bounce {
+            0% { transform: translateX(-50%) scale(0.5); }
+            50% { transform: translateX(-50%) scale(1.2); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+
+        .bubble {
+            position: absolute;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            animation: bubble-rise 2s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes bubble-rise {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-80px) scale(0.3); }
+        }
+
+        .start-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            color: #8B4513;
+            background: rgba(255,255,255,0.9);
+            padding: 20px 40px;
+            border-radius: 20px;
+            text-align: center;
+            z-index: 150;
+        }
+
+        .start-message .key {
+            display: inline-block;
+            background: #8B4513;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body class="page-body">
+    <a href="../index.html" class="back-button">Back to Poop</a>
+
+    <div class="page-container">
+        <h1 class="page-title">Pee Lazy River</h1>
+
+        <div class="content-box">
+            <div class="score-board">
+                <div class="score-item">
+                    <div class="score-label">Distance</div>
+                    <div class="score-value" id="distance">0m</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Coins</div>
+                    <div class="score-value" id="coins">🪙 0</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">High Score</div>
+                    <div class="score-value" id="highScore">0m</div>
+                </div>
+            </div>
+
+            <p style="text-align: center; margin-bottom: 10px;">Choose your float:</p>
+            <div class="float-selector">
+                <div class="float-option selected" data-float="🛟">🛟</div>
+                <div class="float-option" data-float="🦆">🦆</div>
+                <div class="float-option" data-float="🦩">🦩</div>
+                <div class="float-option" data-float="🍩">🍩</div>
+                <div class="float-option" data-float="🐸">🐸</div>
+            </div>
+
+            <div class="game-container" id="gameContainer">
+                <div class="sun">☀️</div>
+                <div class="cloud" style="top: 20px;">☁️</div>
+                <div class="cloud" style="top: 50px; animation-delay: -3s;">☁️</div>
+
+                <div class="river-layer">
+                    <div class="wave wave1"></div>
+                    <div class="wave wave2"></div>
+                    <div class="wave wave3"></div>
+                </div>
+
+                <div class="distance-display" id="distanceDisplay">0m</div>
+                <div class="coin-display" id="coinDisplay">🪙 0</div>
+                <div class="combo-display" id="comboDisplay">COMBO x2!</div>
+
+                <div class="height-indicator">
+                    <div class="height-fill" id="heightFill" style="height: 50%;"></div>
+                </div>
+
+                <div class="player" id="player">🛟</div>
+
+                <div class="start-message" id="startMessage">
+                    Press <span class="key">SPACE</span> to float up!<br>
+                    <small>or tap the screen on mobile</small>
+                </div>
+
+                <div class="game-over-screen" id="gameOverScreen">
+                    <h2>Game Over!</h2>
+                    <div class="final-score">
+                        Distance: <span id="finalDistance">0</span>m<br>
+                        Coins: <span id="finalCoins">0</span>
+                    </div>
+                    <p id="newRecord" style="color: #55EFC4; display: none;">🎉 NEW RECORD! 🎉</p>
+                    <p style="margin-top: 15px;">Press SPACE to play again</p>
+                </div>
+            </div>
+
+            <div class="game-controls">
+                <button class="game-btn start-btn" id="startBtn">Start Game</button>
+            </div>
+
+            <div class="instructions">
+                <h3>How to Play:</h3>
+                <ul>
+                    <li>Press <strong>SPACEBAR</strong> (or tap screen) to float UP</li>
+                    <li>Release to sink down</li>
+                    <li>Dodge the poop-infected animals and trash!</li>
+                    <li>Collect coins 🪙 for bonus points</li>
+                    <li>Don't hit the top or bottom of the river!</li>
+                </ul>
+                <h3 style="margin-top: 15px;">Obstacles:</h3>
+                <ul>
+                    <li>🐊 Poopy Alligator - swims fast!</li>
+                    <li>🦈 Poop Shark - dangerous!</li>
+                    <li>🗑️ Floating Trash</li>
+                    <li>💩 Giant Poop - classic danger!</li>
+                    <li>🪵 Driftwood with poop</li>
+                    <li>🐍 Sewer Snake</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const gameContainer = document.getElementById('gameContainer');
+        const player = document.getElementById('player');
+        const distanceEl = document.getElementById('distance');
+        const distanceDisplay = document.getElementById('distanceDisplay');
+        const coinsEl = document.getElementById('coins');
+        const coinDisplay = document.getElementById('coinDisplay');
+        const highScoreEl = document.getElementById('highScore');
+        const comboDisplay = document.getElementById('comboDisplay');
+        const heightFill = document.getElementById('heightFill');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const finalDistanceEl = document.getElementById('finalDistance');
+        const finalCoinsEl = document.getElementById('finalCoins');
+        const newRecordEl = document.getElementById('newRecord');
+        const startMessage = document.getElementById('startMessage');
+        const startBtn = document.getElementById('startBtn');
+
+        // Game state
+        let gameRunning = false;
+        let playerY = 200;
+        let velocity = 0;
+        let distance = 0;
+        let coins = 0;
+        let combo = 0;
+        let lastCoinTime = 0;
+        let highScore = parseInt(localStorage.getItem('riverHighScore')) || 0;
+        let currentFloat = '🛟';
+        let obstacles = [];
+        let collectibles = [];
+        let gameSpeed = 3;
+        let spawnTimer = 0;
+        let coinSpawnTimer = 0;
+
+        // Physics
+        const gravity = 0.35;
+        const boostPower = -5;
+        const maxFallSpeed = 6;
+        const minY = 30;  // Sky limit
+        const maxY = 380; // River bottom
+
+        // Obstacle types
+        const obstacleTypes = [
+            { emoji: '🐊', name: 'Poopy Alligator', width: 50, height: 30 },
+            { emoji: '🦈', name: 'Poop Shark', width: 50, height: 35 },
+            { emoji: '🗑️', name: 'Trash', width: 35, height: 40 },
+            { emoji: '💩', name: 'Giant Poop', width: 40, height: 40 },
+            { emoji: '🪵', name: 'Driftwood', width: 60, height: 25 },
+            { emoji: '🐍', name: 'Sewer Snake', width: 45, height: 25 },
+            { emoji: '🐀', name: 'Sewer Rat', width: 35, height: 25 },
+            { emoji: '🦠', name: 'Bacteria Blob', width: 35, height: 35 }
+        ];
+
+        highScoreEl.textContent = highScore + 'm';
+
+        // Float selection
+        document.querySelectorAll('.float-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.float-option').forEach(o => o.classList.remove('selected'));
+                option.classList.add('selected');
+                currentFloat = option.dataset.float;
+                player.textContent = currentFloat;
+            });
+        });
+
+        // Input handling
+        let isPressingUp = false;
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                isPressingUp = true;
+                if (!gameRunning) {
+                    if (gameOverScreen.classList.contains('active')) {
+                        resetGame();
+                    }
+                    startGame();
+                }
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') {
+                isPressingUp = false;
+            }
+        });
+
+        // Touch controls
+        gameContainer.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isPressingUp = true;
+            if (!gameRunning) {
+                if (gameOverScreen.classList.contains('active')) {
+                    resetGame();
+                }
+                startGame();
+            }
+        });
+
+        gameContainer.addEventListener('touchend', () => {
+            isPressingUp = false;
+        });
+
+        startBtn.addEventListener('click', () => {
+            if (!gameRunning) {
+                startGame();
+            }
+        });
+
+        function startGame() {
+            gameRunning = true;
+            startMessage.style.display = 'none';
+            gameOverScreen.classList.remove('active');
+            startBtn.textContent = 'Playing...';
+            startBtn.disabled = true;
+            requestAnimationFrame(gameLoop);
+        }
+
+        function gameLoop() {
+            if (!gameRunning) return;
+
+            updatePlayer();
+            updateObstacles();
+            updateCollectibles();
+            checkCollisions();
+            updateDistance();
+            spawnEntities();
+            createBubbles();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function updatePlayer() {
+            // Apply boost or gravity
+            if (isPressingUp) {
+                velocity = boostPower;
+                player.classList.add('boosting');
+                player.classList.remove('falling');
+            } else {
+                velocity += gravity;
+                velocity = Math.min(velocity, maxFallSpeed);
+                player.classList.remove('boosting');
+                player.classList.add('falling');
+            }
+
+            // Update position
+            playerY += velocity;
+
+            // Boundary check
+            if (playerY < minY) {
+                playerY = minY;
+                velocity = 0;
+                hitBoundary();
+            }
+            if (playerY > maxY) {
+                playerY = maxY;
+                velocity = 0;
+                hitBoundary();
+            }
+
+            player.style.top = playerY + 'px';
+
+            // Update height indicator
+            const heightPercent = 100 - ((playerY - minY) / (maxY - minY) * 100);
+            heightFill.style.height = heightPercent + '%';
+        }
+
+        function hitBoundary() {
+            // Flash warning
+            const flash = document.createElement('div');
+            flash.className = 'warning-flash';
+            gameContainer.appendChild(flash);
+            setTimeout(() => flash.remove(), 200);
+        }
+
+        function spawnEntities() {
+            spawnTimer++;
+            coinSpawnTimer++;
+
+            // Spawn obstacles - frequency increases with distance
+            const spawnRate = Math.max(60, 120 - Math.floor(distance / 50));
+            if (spawnTimer >= spawnRate) {
+                spawnTimer = 0;
+                spawnObstacle();
+            }
+
+            // Spawn coins
+            if (coinSpawnTimer >= 80) {
+                coinSpawnTimer = 0;
+                if (Math.random() > 0.3) {
+                    spawnCoin();
+                }
+            }
+        }
+
+        function spawnObstacle() {
+            const type = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
+            const obstacle = document.createElement('div');
+            obstacle.className = 'obstacle';
+            obstacle.textContent = type.emoji;
+            obstacle.style.right = '-60px';
+
+            // Random Y position in river area
+            const y = 100 + Math.random() * 280;
+            obstacle.style.top = y + 'px';
+
+            gameContainer.appendChild(obstacle);
+
+            obstacles.push({
+                element: obstacle,
+                x: 700,
+                y: y,
+                width: type.width,
+                height: type.height,
+                speed: gameSpeed + Math.random() * 2
+            });
+        }
+
+        function spawnCoin() {
+            const coin = document.createElement('div');
+            coin.className = 'collectible';
+            coin.textContent = '🪙';
+            coin.style.right = '-40px';
+
+            const y = 80 + Math.random() * 300;
+            coin.style.top = y + 'px';
+
+            gameContainer.appendChild(coin);
+
+            collectibles.push({
+                element: coin,
+                x: 700,
+                y: y,
+                width: 30,
+                height: 30
+            });
+        }
+
+        function updateObstacles() {
+            const currentSpeed = gameSpeed + (distance / 200);
+
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                const obs = obstacles[i];
+                obs.x -= obs.speed + (distance / 300);
+                obs.element.style.right = (700 - obs.x) + 'px';
+
+                // Remove if off screen
+                if (obs.x < -60) {
+                    obs.element.remove();
+                    obstacles.splice(i, 1);
+                }
+            }
+        }
+
+        function updateCollectibles() {
+            for (let i = collectibles.length - 1; i >= 0; i--) {
+                const col = collectibles[i];
+                col.x -= gameSpeed + (distance / 300);
+                col.element.style.right = (700 - col.x) + 'px';
+
+                // Remove if off screen
+                if (col.x < -40) {
+                    col.element.remove();
+                    collectibles.splice(i, 1);
+                }
+            }
+        }
+
+        function checkCollisions() {
+            // Smaller hitbox for player (more forgiving)
+            const playerRect = {
+                left: 90,
+                right: 110,
+                top: playerY + 10,
+                bottom: playerY + 30
+            };
+
+            // Check obstacle collisions (smaller hitboxes)
+            for (let obs of obstacles) {
+                const obsRect = {
+                    left: obs.x + 8,
+                    right: obs.x + obs.width - 8,
+                    top: obs.y + 8,
+                    bottom: obs.y + obs.height - 8
+                };
+
+                if (rectsCollide(playerRect, obsRect)) {
+                    gameOver();
+                    return;
+                }
+            }
+
+            // Check collectible collisions
+            for (let i = collectibles.length - 1; i >= 0; i--) {
+                const col = collectibles[i];
+                const colRect = {
+                    left: col.x,
+                    right: col.x + col.width,
+                    top: col.y,
+                    bottom: col.y + col.height
+                };
+
+                if (rectsCollide(playerRect, colRect)) {
+                    collectCoin(col, i);
+                }
+            }
+        }
+
+        function rectsCollide(a, b) {
+            return a.left < b.right &&
+                   a.right > b.left &&
+                   a.top < b.bottom &&
+                   a.bottom > b.top;
+        }
+
+        function collectCoin(col, index) {
+            // Combo system
+            const now = Date.now();
+            if (now - lastCoinTime < 2000) {
+                combo++;
+                if (combo > 1) {
+                    comboDisplay.textContent = `COMBO x${combo}!`;
+                    comboDisplay.classList.add('active');
+                    setTimeout(() => comboDisplay.classList.remove('active'), 500);
+                }
+            } else {
+                combo = 1;
+            }
+            lastCoinTime = now;
+
+            coins += combo;
+            coinsEl.textContent = '🪙 ' + coins;
+            coinDisplay.textContent = '🪙 ' + coins;
+
+            // Splash effect
+            const splash = document.createElement('div');
+            splash.className = 'splash-effect';
+            splash.textContent = '+' + combo + '🪙';
+            splash.style.left = col.x + 'px';
+            splash.style.top = col.y + 'px';
+            gameContainer.appendChild(splash);
+            setTimeout(() => splash.remove(), 400);
+
+            col.element.remove();
+            collectibles.splice(index, 1);
+        }
+
+        function updateDistance() {
+            distance += 0.1;
+            const displayDist = Math.floor(distance);
+            distanceEl.textContent = displayDist + 'm';
+            distanceDisplay.textContent = displayDist + 'm';
+
+            // Increase game speed over time
+            gameSpeed = 3 + (distance / 100);
+        }
+
+        function createBubbles() {
+            if (Math.random() > 0.95) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                const size = 5 + Math.random() * 15;
+                bubble.style.width = size + 'px';
+                bubble.style.height = size + 'px';
+                bubble.style.left = (80 + Math.random() * 40) + 'px';
+                bubble.style.top = (playerY + 30) + 'px';
+                gameContainer.appendChild(bubble);
+                setTimeout(() => bubble.remove(), 2000);
+            }
+        }
+
+        function gameOver() {
+            gameRunning = false;
+
+            // Show what hit the player
+            const flash = document.createElement('div');
+            flash.className = 'warning-flash';
+            gameContainer.appendChild(flash);
+            setTimeout(() => flash.remove(), 200);
+
+            const finalDist = Math.floor(distance);
+            finalDistanceEl.textContent = finalDist;
+            finalCoinsEl.textContent = coins;
+
+            // Check high score
+            if (finalDist > highScore) {
+                highScore = finalDist;
+                localStorage.setItem('riverHighScore', highScore);
+                highScoreEl.textContent = highScore + 'm';
+                newRecordEl.style.display = 'block';
+            } else {
+                newRecordEl.style.display = 'none';
+            }
+
+            gameOverScreen.classList.add('active');
+            startBtn.textContent = 'Play Again';
+            startBtn.disabled = false;
+        }
+
+        function resetGame() {
+            // Clear obstacles and collectibles
+            obstacles.forEach(obs => obs.element.remove());
+            collectibles.forEach(col => col.element.remove());
+            obstacles = [];
+            collectibles = [];
+
+            // Reset state
+            playerY = 200;
+            velocity = 0;
+            distance = 0;
+            coins = 0;
+            combo = 0;
+            gameSpeed = 3;
+            spawnTimer = 0;
+            coinSpawnTimer = 0;
+
+            // Reset displays
+            distanceEl.textContent = '0m';
+            distanceDisplay.textContent = '0m';
+            coinsEl.textContent = '🪙 0';
+            coinDisplay.textContent = '🪙 0';
+
+            // Reset player position
+            player.style.top = playerY + 'px';
+            player.textContent = currentFloat;
+        }
+
+        // Initialize
+        player.style.top = playerY + 'px';
+    </script>
+</body>
+</html>

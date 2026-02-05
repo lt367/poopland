@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop News Daily</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="page-styles.css">
+    <style>
+        .news-header {
+            background: linear-gradient(135deg, #8B4513, #A0522D);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .news-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .news-header .tagline {
+            font-style: italic;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        .news-date {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        .breaking-news {
+            background: linear-gradient(90deg, #FF6B6B, #C0392B);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            animation: flash 2s ease-in-out infinite;
+        }
+
+        @keyframes flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .breaking-label {
+            background: white;
+            color: #C0392B;
+            padding: 5px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .breaking-text {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .breaking-text span {
+            display: inline-block;
+            animation: scroll-text 15s linear infinite;
+        }
+
+        @keyframes scroll-text {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .news-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .main-story {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .story-image {
+            height: 250px;
+            background: linear-gradient(135deg, #87CEEB, #90EE90);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 8rem;
+        }
+
+        .story-content {
+            padding: 20px;
+        }
+
+        .story-category {
+            background: #FFD700;
+            color: #4A2F17;
+            padding: 3px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .story-title {
+            font-size: 1.5rem;
+            color: #8B4513;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .story-excerpt {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .story-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .read-more {
+            background: linear-gradient(145deg, #8B4513, #A0522D);
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: transform 0.2s;
+        }
+
+        .read-more:hover {
+            transform: scale(1.05);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .sidebar-story {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .sidebar-story:hover {
+            transform: translateX(5px);
+        }
+
+        .sidebar-story h3 {
+            font-size: 1rem;
+            color: #8B4513;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-story p {
+            color: #888;
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        .sidebar-story .emoji {
+            font-size: 2rem;
+            float: left;
+            margin-right: 10px;
+        }
+
+        .section-title {
+            background: #FFF8DC;
+            padding: 10px 20px;
+            border-radius: 10px;
+            color: #8B4513;
+            font-size: 1.2rem;
+            margin: 30px 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .opinion-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .opinion-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .opinion-avatar {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .opinion-author {
+            text-align: center;
+            font-weight: bold;
+            color: #8B4513;
+            margin-bottom: 10px;
+        }
+
+        .opinion-text {
+            color: #666;
+            font-style: italic;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .poll-section {
+            background: #E8F5E9;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .poll-question {
+            font-size: 1.2rem;
+            color: #2E7D32;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .poll-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .poll-option {
+            background: white;
+            border: 2px solid #A5D6A7;
+            border-radius: 10px;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .poll-option:hover {
+            background: #A5D6A7;
+        }
+
+        .poll-option.voted {
+            pointer-events: none;
+        }
+
+        .poll-bar {
+            height: 100%;
+            background: #4CAF50;
+            border-radius: 8px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: 0;
+            transition: width 0.5s ease;
+        }
+
+        .poll-option span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .poll-percentage {
+            font-weight: bold;
+            color: #2E7D32;
+        }
+
+        .weather-widget {
+            background: linear-gradient(135deg, #74B9FF, #0984E3);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .weather-icon {
+            font-size: 4rem;
+        }
+
+        .weather-temp {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .weather-desc {
+            opacity: 0.9;
+        }
+
+        .comic-strip {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .comic-panels {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .comic-panel {
+            background: #FFF8DC;
+            border: 3px solid #8B4513;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .comic-panel .emoji {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .comic-panel .text {
+            font-size: 0.85rem;
+            color: #4A2F17;
+        }
+
+        .subscribe-box {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .subscribe-box h3 {
+            color: #4A2F17;
+            margin-bottom: 15px;
+        }
+
+        .subscribe-form {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .subscribe-input {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            width: 250px;
+            max-width: 100%;
+        }
+
+        .subscribe-btn {
+            padding: 12px 30px;
+            background: #8B4513;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .subscribe-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .article-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            z-index: 1000;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .article-popup.active {
+            display: block;
+            animation: popup-in 0.3s ease;
+        }
+
+        @keyframes popup-in {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .popup-overlay.active {
+            display: block;
+        }
+
+        .article-popup h2 {
+            color: #8B4513;
+            margin-bottom: 20px;
+        }
+
+        .article-popup .article-body {
+            color: #444;
+            line-height: 1.8;
+        }
+
+        .close-article {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .reaction-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .reaction-btn {
+            background: #FFF8DC;
+            border: 2px solid #DEB887;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+        }
+
+        .reaction-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .reaction-btn.selected {
+            background: #FFD700;
+            border-color: #FFA500;
+        }
+    </style>
+</head>
+<body class="page-body">
+    <a href="../index.html" class="back-button">Back to Poop</a>
+
+    <div class="page-container" style="max-width: 1000px;">
+        <div class="content-box">
+            <div class="news-header">
+                <h1>💩 Poop News Daily 💩</h1>
+                <div class="tagline">"All the news that's fit to flush!"</div>
+                <div class="news-date" id="currentDate"></div>
+            </div>
+
+            <div class="breaking-news">
+                <div class="breaking-label">🔴 BREAKING</div>
+                <div class="breaking-text">
+                    <span>Giant Poop Theme Park Opens to Record Crowds! Visitors Say "It's the sh*t!" | Lazy River Reports Highest Attendance Ever | Poop Coaster Named Best Ride of the Year!</span>
+                </div>
+            </div>
+
+            <div class="news-grid">
+                <div class="main-story">
+                    <div class="story-image">🏰💩</div>
+                    <div class="story-content">
+                        <span class="story-category">HEADLINE</span>
+                        <h2 class="story-title">Poop World Expansion: New "Constipation Station" Ride Coming 2026!</h2>
+                        <p class="story-excerpt">
+                            In an exclusive interview, the CEO of Poop World announced plans for a new thrill ride that will "really get things moving." The ride promises to be the longest and most intense experience in the park's history...
+                        </p>
+                        <div class="story-meta">
+                            <span>By Dookie McGee | 2 hours ago</span>
+                            <button class="read-more" onclick="showArticle('expansion')">Read More</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar">
+                    <div class="weather-widget">
+                        <div class="weather-icon">☀️</div>
+                        <div class="weather-temp">72°F</div>
+                        <div class="weather-desc">Perfect pooping weather!</div>
+                    </div>
+
+                    <div class="sidebar-story" onclick="showArticle('lazy-river')">
+                        <span class="emoji">🌊</span>
+                        <h3>Pee Lazy River Adds New "Warm Zone"</h3>
+                        <p>Visitors rave about the cozy new section...</p>
+                    </div>
+
+                    <div class="sidebar-story" onclick="showArticle('record')">
+                        <span class="emoji">🏆</span>
+                        <h3>Local Man Sets Record: 47 Rides in One Day!</h3>
+                        <p>Doctors concerned but impressed...</p>
+                    </div>
+
+                    <div class="sidebar-story" onclick="showArticle('food')">
+                        <span class="emoji">🍫</span>
+                        <h3>New "Brown Swirl" Ice Cream Sells Out!</h3>
+                        <p>Chocolate lovers can't get enough...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">📰 More Stories</div>
+
+            <div class="opinion-section">
+                <div class="opinion-card">
+                    <div class="opinion-avatar">🧓</div>
+                    <div class="opinion-author">Grandpa Plops</div>
+                    <div class="opinion-text">"Back in my day, we didn't have fancy theme parks. We just had a hole in the ground and we were HAPPY!"</div>
+                </div>
+
+                <div class="opinion-card">
+                    <div class="opinion-avatar">👩‍🔬</div>
+                    <div class="opinion-author">Dr. Stool Sample</div>
+                    <div class="opinion-text">"From a scientific perspective, this park is a goldmine of research opportunities. The microbial diversity alone is fascinating!"</div>
+                </div>
+
+                <div class="opinion-card">
+                    <div class="opinion-avatar">👶</div>
+                    <div class="opinion-author">Little Timmy</div>
+                    <div class="opinion-text">"POOP IS FUNNY HAHAHA! 💩💩💩"</div>
+                </div>
+            </div>
+
+            <div class="section-title">🎨 Daily Comic</div>
+
+            <div class="comic-strip">
+                <h3 style="text-align: center; color: #8B4513; margin-bottom: 15px;">The Adventures of Sir Plops-a-Lot</h3>
+                <div class="comic-panels">
+                    <div class="comic-panel">
+                        <div class="emoji">💩😃</div>
+                        <div class="text">"What a beautiful day for a walk!"</div>
+                    </div>
+                    <div class="comic-panel">
+                        <div class="emoji">💩😰🚽</div>
+                        <div class="text">"Oh no, I forgot my toilet pass!"</div>
+                    </div>
+                    <div class="comic-panel">
+                        <div class="emoji">💩😅🌳</div>
+                        <div class="text">"Nature is the original bathroom!"</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">📊 Today's Poll</div>
+
+            <div class="poll-section">
+                <div class="poll-question">What's your favorite attraction at Poop World?</div>
+                <div class="poll-options" id="pollOptions">
+                    <div class="poll-option" data-option="coaster" onclick="vote('coaster')">
+                        <span>🎢 Poop Coaster</span>
+                        <span class="poll-percentage">0%</span>
+                    </div>
+                    <div class="poll-option" data-option="river" onclick="vote('river')">
+                        <span>🌊 Pee Lazy River</span>
+                        <span class="poll-percentage">0%</span>
+                    </div>
+                    <div class="poll-option" data-option="haunted" onclick="vote('haunted')">
+                        <span>👻 Haunted Toilet</span>
+                        <span class="poll-percentage">0%</span>
+                    </div>
+                    <div class="poll-option" data-option="ferris" onclick="vote('ferris')">
+                        <span>🎡 Dookie Wheel</span>
+                        <span class="poll-percentage">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subscribe-box">
+                <h3>📧 Subscribe to Poop News Daily!</h3>
+                <p style="margin-bottom: 15px; color: #4A2F17;">Get the latest poop news delivered straight to your inbox!</p>
+                <div class="subscribe-form">
+                    <input type="email" class="subscribe-input" placeholder="Enter your email..." id="emailInput">
+                    <button class="subscribe-btn" onclick="subscribe()">Subscribe!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Article Popup -->
+    <div class="popup-overlay" id="popupOverlay"></div>
+    <div class="article-popup" id="articlePopup">
+        <button class="close-article" onclick="closeArticle()">×</button>
+        <h2 id="articleTitle"></h2>
+        <div class="article-body" id="articleBody"></div>
+        <div class="reaction-buttons">
+            <button class="reaction-btn" onclick="react(this, '💩')">💩</button>
+            <button class="reaction-btn" onclick="react(this, '😂')">😂</button>
+            <button class="reaction-btn" onclick="react(this, '🤢')">🤢</button>
+            <button class="reaction-btn" onclick="react(this, '❤️')">❤️</button>
+        </div>
+    </div>
+
+    <script>
+        // Set current date
+        const today = new Date();
+        document.getElementById('currentDate').textContent = today.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        const articles = {
+            expansion: {
+                title: 'Poop World Expansion: New "Constipation Station" Ride Coming 2026!',
+                body: `
+                    <p>In a groundbreaking announcement today, Poop World CEO Mr. Flush McToilet revealed plans for the park's most ambitious ride yet: Constipation Station!</p>
+
+                    <p>"This ride will simulate the experience of... well, you know... when things aren't moving as smoothly as they should," McToilet explained during the press conference, held appropriately in the park's largest restroom.</p>
+
+                    <p>The ride will feature:</p>
+                    <ul>
+                        <li>A 5-minute "waiting period" where riders sit in suspense</li>
+                        <li>Dramatic music building tension</li>
+                        <li>A sudden "release" drop of 200 feet</li>
+                        <li>Complimentary fiber bars at the exit</li>
+                    </ul>
+
+                    <p>Early testing has shown that 9 out of 10 riders describe the experience as "relieving."</p>
+
+                    <p>Construction begins next month, with an expected opening date of Spring 2026. Pre-sale tickets are already available for the truly dedicated fans.</p>
+                `
+            },
+            'lazy-river': {
+                title: 'Pee Lazy River Adds New "Warm Zone"',
+                body: `
+                    <p>The beloved Pee Lazy River attraction has unveiled a new section that's generating buzz among visitors: The Warm Zone!</p>
+
+                    <p>"We noticed certain areas of the river were naturally warmer than others," explained Head Engineer Ima Goer. "So we decided to embrace it and create an officially designated Warm Zone."</p>
+
+                    <p>Features of the new zone include:</p>
+                    <ul>
+                        <li>Water temperatures 10 degrees warmer than the rest of the river</li>
+                        <li>Mood lighting for "relaxation"</li>
+                        <li>Complimentary extra-large drinks to keep hydration up</li>
+                        <li>A "No Questions Asked" policy</li>
+                    </ul>
+
+                    <p>Visitor reactions have been overwhelmingly positive, with many calling it "suspiciously comfortable."</p>
+                `
+            },
+            record: {
+                title: 'Local Man Sets Record: 47 Rides in One Day!',
+                body: `
+                    <p>Competitive rider Randy Runs-a-Lot has officially set a new park record by completing 47 rides in a single day!</p>
+
+                    <p>"I've been training for this for years," Randy told reporters while clutching his Season Pass. "My strategy? Skip the Lazy River, avoid the food court, and never stop moving."</p>
+
+                    <p>Randy's route included:</p>
+                    <ul>
+                        <li>15 rides on the Poop Coaster</li>
+                        <li>12 trips through the Haunted Toilet</li>
+                        <li>10 spins on the Dookie Wheel</li>
+                        <li>8 carousel rides</li>
+                        <li>2 emergency bathroom breaks (ironic, given the venue)</li>
+                    </ul>
+
+                    <p>Medical staff were on standby throughout the attempt. "We've never seen someone so dedicated to entertainment," said Dr. Wanna Go, the park physician.</p>
+
+                    <p>Randy says he's already planning to break his own record next summer.</p>
+                `
+            },
+            food: {
+                title: 'New "Brown Swirl" Ice Cream Sells Out in Hours!',
+                body: `
+                    <p>The Poop Cafe's newest menu item has taken the park by storm! The "Brown Swirl" ice cream sold out within just 3 hours of its debut.</p>
+
+                    <p>"It's chocolate, obviously," clarified Chef Cocoa Bean. "What else would it be? It's just shaped in a... distinctive way."</p>
+
+                    <p>The ice cream features:</p>
+                    <ul>
+                        <li>Triple chocolate fudge base</li>
+                        <li>Swirled presentation in a special mold</li>
+                        <li>Chocolate sprinkles ("for texture")</li>
+                        <li>A tiny flag on top</li>
+                    </ul>
+
+                    <p>Social media has exploded with photos of visitors posing with their treats, generating over 10 million impressions under the hashtag #BrownSwirlChallenge.</p>
+
+                    <p>The Poop Cafe has promised to triple production to meet demand. "Everyone wants a taste," said cafe manager Sue Weetz. "We can barely keep up!"</p>
+                `
+            }
+        };
+
+        const pollVotes = {
+            coaster: 45,
+            river: 30,
+            haunted: 15,
+            ferris: 10
+        };
+
+        let hasVoted = false;
+
+        function showArticle(id) {
+            const article = articles[id];
+            if (!article) return;
+
+            document.getElementById('articleTitle').textContent = article.title;
+            document.getElementById('articleBody').innerHTML = article.body;
+
+            document.getElementById('articlePopup').classList.add('active');
+            document.getElementById('popupOverlay').classList.add('active');
+        }
+
+        function closeArticle() {
+            document.getElementById('articlePopup').classList.remove('active');
+            document.getElementById('popupOverlay').classList.remove('active');
+        }
+
+        document.getElementById('popupOverlay').addEventListener('click', closeArticle);
+
+        function vote(option) {
+            if (hasVoted) return;
+            hasVoted = true;
+
+            pollVotes[option] += 1;
+
+            const total = Object.values(pollVotes).reduce((a, b) => a + b, 0);
+
+            document.querySelectorAll('.poll-option').forEach(opt => {
+                const optionName = opt.dataset.option;
+                const percentage = Math.round((pollVotes[optionName] / total) * 100);
+
+                opt.classList.add('voted');
+                opt.querySelector('.poll-percentage').textContent = percentage + '%';
+
+                // Add visual bar
+                opt.style.position = 'relative';
+                opt.style.overflow = 'hidden';
+
+                const bar = document.createElement('div');
+                bar.className = 'poll-bar';
+                bar.style.width = '0%';
+                opt.insertBefore(bar, opt.firstChild);
+
+                setTimeout(() => {
+                    bar.style.width = percentage + '%';
+                }, 100);
+
+                if (optionName === option) {
+                    opt.style.borderColor = '#4CAF50';
+                    opt.style.borderWidth = '3px';
+                }
+            });
+        }
+
+        function react(btn, emoji) {
+            document.querySelectorAll('.reaction-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+
+            // Fun animation
+            const reaction = document.createElement('div');
+            reaction.textContent = emoji;
+            reaction.style.cssText = `
+                position: fixed;
+                font-size: 3rem;
+                left: ${btn.getBoundingClientRect().left}px;
+                top: ${btn.getBoundingClientRect().top}px;
+                pointer-events: none;
+                z-index: 10000;
+                animation: float-up 1s ease-out forwards;
+            `;
+            document.body.appendChild(reaction);
+            setTimeout(() => reaction.remove(), 1000);
+        }
+
+        // Add float-up animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float-up {
+                0% { opacity: 1; transform: translateY(0) scale(1); }
+                100% { opacity: 0; transform: translateY(-100px) scale(2); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        function subscribe() {
+            const email = document.getElementById('emailInput').value;
+            if (email && email.includes('@')) {
+                alert('🎉 Thanks for subscribing to Poop News Daily! Check your inbox for a special welcome gift! 💩');
+                document.getElementById('emailInput').value = '';
+            } else {
+                alert('Please enter a valid email address!');
+            }
+        }
+
+        // Fun easter egg - Konami code
+        let konamiCode = [];
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+
+        document.addEventListener('keydown', (e) => {
+            konamiCode.push(e.key);
+            konamiCode = konamiCode.slice(-10);
+
+            if (konamiCode.join(',') === konamiSequence.join(',')) {
+                // Poop rain!
+                for (let i = 0; i < 50; i++) {
+                    setTimeout(() => {
+                        const poop = document.createElement('div');
+                        poop.textContent = '💩';
+                        poop.style.cssText = `
+                            position: fixed;
+                            font-size: 2rem;
+                            left: ${Math.random() * 100}vw;
+                            top: -50px;
+                            z-index: 10000;
+                            animation: poop-fall 3s linear forwards;
+                        `;
+                        document.body.appendChild(poop);
+                        setTimeout(() => poop.remove(), 3000);
+                    }, i * 100);
+                }
+
+                const fallStyle = document.createElement('style');
+                fallStyle.textContent = `
+                    @keyframes poop-fall {
+                        0% { transform: translateY(0) rotate(0deg); }
+                        100% { transform: translateY(100vh) rotate(720deg); }
+                    }
+                `;
+                document.head.appendChild(fallStyle);
+            }
+        });
+    </script>
+</body>
+</html>

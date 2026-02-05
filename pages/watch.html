@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch the Game - Team Poop vs Team Toilet Paper</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="page-styles.css">
+    <style>
+        .stadium-container {
+            position: relative;
+            width: 100%;
+            max-width: 850px;
+            margin: 20px auto;
+            background: linear-gradient(to bottom, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 4px solid #0f0f23;
+        }
+
+        /* Scoreboard */
+        .scoreboard {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d, #1a1a1a);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5), 0 5px 20px rgba(0,0,0,0.3);
+            border: 3px solid #333;
+        }
+
+        .team-section {
+            text-align: center;
+            flex: 1;
+        }
+
+        .team-logo {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 10px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .team-logo.poop {
+            background: linear-gradient(135deg, #8d6e63, #6d4c41);
+        }
+
+        .team-logo.tp {
+            background: linear-gradient(135deg, #fff, #e0e0e0);
+        }
+
+        .logo-inner {
+            width: 40px;
+            height: 35px;
+            position: relative;
+        }
+
+        .logo-inner.poop-logo .poop-shape {
+            position: absolute;
+            background: #4e342e;
+            border-radius: 50%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .logo-inner.poop-logo .p1 { width: 12px; height: 10px; top: 0; }
+        .logo-inner.poop-logo .p2 { width: 22px; height: 10px; top: 8px; }
+        .logo-inner.poop-logo .p3 { width: 32px; height: 12px; top: 16px; }
+
+        .logo-inner.tp-logo {
+            width: 30px;
+            height: 35px;
+        }
+
+        .tp-roll {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #f5f5f5, #fff, #f5f5f5);
+            border-radius: 5px;
+            position: relative;
+            border: 2px solid #e0e0e0;
+        }
+
+        .tp-roll::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px;
+            height: 10px;
+            background: #8d6e63;
+            border-radius: 50%;
+        }
+
+        .tp-roll::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            right: -8px;
+            width: 12px;
+            height: 25px;
+            background: #fff;
+            border-radius: 0 5px 5px 0;
+            border: 1px solid #e0e0e0;
+            border-left: none;
+        }
+
+        .team-name {
+            color: #ffd700;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .team-score {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #00ff00;
+            text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00;
+            font-family: 'Courier New', monospace;
+            line-height: 1;
+            margin-top: 10px;
+        }
+
+        .score-divider {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .vs-text {
+            color: #ff4444;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px #ff4444;
+        }
+
+        .match-time {
+            color: #ff6b6b;
+            font-size: 2rem;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 0 10px #ff6b6b;
+            margin-top: 10px;
+        }
+
+        .match-period {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* Field */
+        .field-container {
+            position: relative;
+            width: 100%;
+            padding-top: 55%;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.3);
+        }
+
+        .field {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                #2d8a2d 0px,
+                #2d8a2d 10%,
+                #339933 10%,
+                #339933 20%
+            );
+            border: 4px solid #fff;
+        }
+
+        /* Field markings */
+        .center-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: rgba(255,255,255,0.9);
+            transform: translateX(-50%);
+        }
+
+        .center-circle {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 20%;
+            height: 36%;
+            border: 3px solid rgba(255,255,255,0.9);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .center-dot {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 10px;
+            height: 10px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .penalty-box {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12%;
+            height: 55%;
+            border: 3px solid rgba(255,255,255,0.9);
+        }
+
+        .penalty-box.left { left: 0; border-left: none; }
+        .penalty-box.right { right: 0; border-right: none; }
+
+        .goal {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 18%;
+            background: linear-gradient(90deg, #fff, #ddd);
+            border: 2px solid #bbb;
+        }
+
+        .goal.left { left: 0; border-left: none; border-radius: 0 3px 3px 0; }
+        .goal.right { right: 0; border-right: none; border-radius: 3px 0 0 3px; }
+
+        .goal-net {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2.5%;
+            height: 20%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 3px,
+                rgba(255,255,255,0.4) 3px,
+                rgba(255,255,255,0.4) 6px
+            );
+        }
+
+        .goal-net.left { left: -2.5%; }
+        .goal-net.right { right: -2.5%; }
+
+        /* Players */
+        .player {
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            z-index: 10;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: left 0.15s ease-out, right 0.15s ease-out, top 0.15s ease-out;
+            will-change: left, right, top;
+        }
+
+        .player::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 14px;
+            background: linear-gradient(135deg, #ffccaa, #e0a080);
+            border-radius: 50%;
+            border: 2px solid #d49a6a;
+        }
+
+        .player::after {
+            content: attr(data-number);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        }
+
+        .player.team-poop {
+            background: linear-gradient(135deg, #8d6e63 0%, #6d4c41 50%, #5d4037 100%);
+            border: 3px solid #3e2723;
+        }
+
+        .player.team-tp {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 50%, #e0e0e0 100%);
+            border: 3px solid #bdbdbd;
+        }
+
+        .player.team-tp::after {
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.7);
+        }
+
+        .player.goalkeeper {
+            background: linear-gradient(135deg, #ffd54f 0%, #ffb300 50%, #ff8f00 100%);
+            border: 3px solid #e65100;
+        }
+
+        .player.goalkeeper::after {
+            color: #333;
+        }
+
+        .player.has-ball {
+            box-shadow: 0 0 20px 5px rgba(255,255,255,0.8), 0 4px 10px rgba(0,0,0,0.5);
+            transform: scale(1.1);
+        }
+
+        /* Ball */
+        .ball {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle at 30% 30%, #fff, #ddd, #aaa);
+            border-radius: 50%;
+            z-index: 20;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.5);
+            transition: left 0.1s ease-out, top 0.1s ease-out;
+            will-change: left, top;
+        }
+
+        .ball::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 5px;
+            height: 5px;
+            background: #222;
+            border-radius: 50%;
+        }
+
+        .ball::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            right: 3px;
+            width: 4px;
+            height: 4px;
+            background: #222;
+            border-radius: 50%;
+        }
+
+        /* Crowd */
+        .crowd-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding: 10px;
+            background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
+            border-radius: 10px;
+        }
+
+        .crowd-side {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            width: 45%;
+        }
+
+        .fan {
+            width: 14px;
+            height: 20px;
+            border-radius: 50% 50% 0 0;
+            animation: fan-wave 1s ease-in-out infinite;
+        }
+
+        .fan.poop-fan { background: linear-gradient(to bottom, #8d6e63, #5d4037); }
+        .fan.tp-fan { background: linear-gradient(to bottom, #fff, #e0e0e0); }
+
+        .fan:nth-child(odd) { animation-delay: 0.15s; }
+        .fan:nth-child(3n) { animation-delay: 0.3s; }
+
+        @keyframes fan-wave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        /* Commentary */
+        .commentary-box {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-top: 15px;
+            border: 2px solid #333;
+            min-height: 60px;
+        }
+
+        .commentary-label {
+            color: #ffd700;
+            font-size: 0.75rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .commentary-text {
+            color: #fff;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        /* Stats Panel */
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            border: 2px solid #333;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.75rem;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .stat-values {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .stat-home, .stat-away {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .stat-home { color: #8d6e63; }
+        .stat-away { color: #e0e0e0; }
+        .stat-vs { color: #555; font-size: 0.8rem; }
+
+        .possession-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .possession-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8d6e63, #6d4c41);
+            transition: width 0.3s ease;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .play-btn {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .play-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+        }
+
+        .cheer-btn {
+            background: linear-gradient(135deg, #ff5722, #d84315);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 87, 34, 0.4);
+        }
+
+        .speed-btn {
+            background: linear-gradient(135deg, #9c27b0, #6a1b9a);
+            color: white;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.4);
+        }
+
+        /* Goal celebration */
+        .goal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            border-radius: 6px;
+        }
+
+        .goal-overlay.active {
+            display: flex;
+            animation: goal-flash 0.4s ease;
+        }
+
+        @keyframes goal-flash {
+            0%, 50%, 100% { background: rgba(0,0,0,0.85); }
+            25%, 75% { background: rgba(255,215,0,0.4); }
+        }
+
+        .goal-text {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 30px #ffd700, 0 0 60px #ff8c00;
+            animation: goal-zoom 0.4s ease-out;
+        }
+
+        @keyframes goal-zoom {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Event popup */
+        .event-popup {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.2s;
+            border: 2px solid #ffd700;
+            font-size: 0.9rem;
+        }
+
+        .event-popup.active {
+            opacity: 1;
+        }
+
+        /* Events log */
+        .events-log {
+            max-height: 120px;
+            overflow-y: auto;
+            margin-top: 15px;
+            background: #0a0a0a;
+            border-radius: 10px;
+            padding: 8px;
+            border: 2px solid #222;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            border-bottom: 1px solid #222;
+            font-size: 0.85rem;
+        }
+
+        .event-time {
+            color: #ffd700;
+            font-weight: bold;
+            min-width: 35px;
+        }
+
+        .event-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.65rem;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .event-icon.goal { background: #4caf50; }
+        .event-icon.shot { background: #2196f3; }
+        .event-icon.foul { background: #f44336; }
+        .event-icon.save { background: #ff9800; }
+
+        .event-desc { color: #ccc; flex: 1; }
+
+        /* Cheer Effects */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+            z-index: 200;
+            animation: confetti-fall 2s ease-out forwards;
+        }
+
+        .confetti.square { border-radius: 2px; }
+        .confetti.circle { border-radius: 50%; }
+        .confetti.triangle {
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 10px solid currentColor;
+            background: none !important;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(300px) rotate(720deg) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        /* Firework effect */
+        .firework {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 200;
+            animation: firework-burst 0.8s ease-out forwards;
+        }
+
+        @keyframes firework-burst {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+
+        /* Cheer wave effect */
+        .cheer-wave {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 150;
+            background: radial-gradient(circle, rgba(139,110,99,0.4) 0%, transparent 70%);
+            animation: cheer-pulse 0.5s ease-out forwards;
+        }
+
+        @keyframes cheer-pulse {
+            0% { transform: scale(0.5); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        /* Cheer text floating */
+        .cheer-text {
+            position: absolute;
+            font-size: 1.5rem;
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 200;
+            animation: cheer-float 1.5s ease-out forwards;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        @keyframes cheer-float {
+            0% {
+                transform: translateY(0) scale(0.5);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Help Team Poop section */
+        .help-section {
+            background: linear-gradient(135deg, #2d1f1a, #1a1210);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 2px solid #5d4037;
+            text-align: center;
+        }
+
+        .help-title {
+            color: #ffd700;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .boost-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .boost-btn {
+            padding: 12px 20px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .boost-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+
+        .boost-btn:active::after {
+            width: 200px;
+            height: 200px;
+        }
+
+        .boost-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .boost-morale {
+            background: linear-gradient(135deg, #8d6e63, #5d4037);
+            color: white;
+            box-shadow: 0 4px 15px rgba(93,64,55,0.4);
+        }
+
+        .boost-attack {
+            background: linear-gradient(135deg, #f44336, #c62828);
+            color: white;
+            box-shadow: 0 4px 15px rgba(244,67,54,0.4);
+        }
+
+        .boost-defense {
+            background: linear-gradient(135deg, #2196f3, #1565c0);
+            color: white;
+            box-shadow: 0 4px 15px rgba(33,150,243,0.4);
+        }
+
+        .boost-luck {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            color: #333;
+            box-shadow: 0 4px 15px rgba(255,215,0,0.4);
+        }
+
+        .boost-btn:hover:not(:disabled) {
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .boost-meter {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .meter-label {
+            color: #888;
+            font-size: 0.8rem;
+        }
+
+        .meter-bar {
+            width: 200px;
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .meter-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8d6e63, #ffd700);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .meter-value {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 0.9rem;
+            min-width: 40px;
+        }
+
+        /* Power-up active indicator */
+        .power-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+            min-height: 24px;
+        }
+
+        .power-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            animation: badge-pulse 1s ease-in-out infinite;
+        }
+
+        .power-badge.attack { background: #f44336; color: white; }
+        .power-badge.defense { background: #2196f3; color: white; }
+        .power-badge.luck { background: #ffd700; color: #333; }
+
+        @keyframes badge-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Super cheer effect */
+        .super-cheer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body class="page-body">
+    <a href="../index.html" class="back-button">Back to Poop</a>
+
+    <div class="page-container" style="max-width: 900px;">
+        <h1 class="page-title">Watch the Game</h1>
+
+        <div class="content-box" style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 0;">
+            <div class="stadium-container">
+                <!-- Scoreboard -->
+                <div class="scoreboard">
+                    <div class="team-section">
+                        <div class="team-logo poop">
+                            <div class="logo-inner poop-logo">
+                                <div class="poop-shape p1"></div>
+                                <div class="poop-shape p2"></div>
+                                <div class="poop-shape p3"></div>
+                            </div>
+                        </div>
+                        <div class="team-name">TEAM POOP</div>
+                        <div class="team-score" id="homeScore">0</div>
+                    </div>
+
+                    <div class="score-divider">
+                        <div class="vs-text">VS</div>
+                        <div class="match-time" id="matchTime">00:00</div>
+                        <div class="match-period" id="matchPeriod">1ST HALF</div>
+                    </div>
+
+                    <div class="team-section">
+                        <div class="team-logo tp">
+                            <div class="logo-inner tp-logo">
+                                <div class="tp-roll"></div>
+                            </div>
+                        </div>
+                        <div class="team-name">TEAM TOILET PAPER</div>
+                        <div class="team-score" id="awayScore">0</div>
+                    </div>
+                </div>
+
+                <!-- Field -->
+                <div class="field-container">
+                    <div class="field" id="field">
+                        <!-- Field markings -->
+                        <div class="center-line"></div>
+                        <div class="center-circle"></div>
+                        <div class="center-dot"></div>
+                        <div class="penalty-box left"></div>
+                        <div class="penalty-box right"></div>
+                        <div class="goal left"></div>
+                        <div class="goal right"></div>
+                        <div class="goal-net left"></div>
+                        <div class="goal-net right"></div>
+
+                        <!-- Team Poop (5 players) -->
+                        <div class="player team-poop goalkeeper" id="poopGK" data-number="1"></div>
+                        <div class="player team-poop" id="poopDef" data-number="4"></div>
+                        <div class="player team-poop" id="poopMid1" data-number="8"></div>
+                        <div class="player team-poop" id="poopMid2" data-number="6"></div>
+                        <div class="player team-poop" id="poopFwd" data-number="9"></div>
+
+                        <!-- Team Toilet Paper (5 players) -->
+                        <div class="player team-tp goalkeeper" id="tpGK" data-number="1"></div>
+                        <div class="player team-tp" id="tpDef" data-number="4"></div>
+                        <div class="player team-tp" id="tpMid1" data-number="8"></div>
+                        <div class="player team-tp" id="tpMid2" data-number="6"></div>
+                        <div class="player team-tp" id="tpFwd" data-number="9"></div>
+
+                        <!-- Ball -->
+                        <div class="ball" id="ball"></div>
+
+                        <!-- Goal overlay -->
+                        <div class="goal-overlay" id="goalOverlay">
+                            <div class="goal-text">GOAL!</div>
+                        </div>
+
+                        <!-- Event popup -->
+                        <div class="event-popup" id="eventPopup"></div>
+                    </div>
+                </div>
+
+                <!-- Crowd -->
+                <div class="crowd-section">
+                    <div class="crowd-side" id="poopCrowd"></div>
+                    <div class="crowd-side" id="tpCrowd"></div>
+                </div>
+
+                <!-- Commentary -->
+                <div class="commentary-box">
+                    <div class="commentary-label">Live Commentary</div>
+                    <div class="commentary-text" id="commentary">Welcome to the Poop Bowl! Team Poop faces Team Toilet Paper in today's big match!</div>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-panel">
+                    <div class="stat-box">
+                        <div class="stat-label">Possession</div>
+                        <div class="stat-values">
+                            <span class="stat-home" id="homePoss">50%</span>
+                            <span class="stat-vs">-</span>
+                            <span class="stat-away" id="awayPoss">50%</span>
+                        </div>
+                        <div class="possession-bar">
+                            <div class="possession-fill" id="possBar" style="width: 50%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Shots</div>
+                        <div class="stat-values">
+                            <span class="stat-home" id="homeShots">0</span>
+                            <span class="stat-vs">-</span>
+                            <span class="stat-away" id="awayShots">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Fouls</div>
+                        <div class="stat-values">
+                            <span class="stat-home" id="homeFouls">0</span>
+                            <span class="stat-vs">-</span>
+                            <span class="stat-away" id="awayFouls">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Events Log -->
+                <div class="events-log" id="eventsLog">
+                    <div class="event-item">
+                        <span class="event-time">00'</span>
+                        <span class="event-icon" style="background: #4caf50;">K</span>
+                        <span class="event-desc">Kick-off!</span>
+                    </div>
+                </div>
+
+                <!-- Help Team Poop Section -->
+                <div class="help-section">
+                    <div class="help-title">Help Team Poop Win!</div>
+                    <div class="boost-container">
+                        <button class="boost-btn boost-morale" id="boostMorale">Cheer Loud!</button>
+                        <button class="boost-btn boost-attack" id="boostAttack">Boost Attack</button>
+                        <button class="boost-btn boost-defense" id="boostDefense">Boost Defense</button>
+                        <button class="boost-btn boost-luck" id="boostLuck">Lucky Charm</button>
+                    </div>
+                    <div class="boost-meter">
+                        <span class="meter-label">Team Spirit:</span>
+                        <div class="meter-bar">
+                            <div class="meter-fill" id="spiritMeter"></div>
+                        </div>
+                        <span class="meter-value" id="spiritValue">0%</span>
+                    </div>
+                    <div class="power-indicator" id="powerIndicator"></div>
+                </div>
+
+                <!-- Controls -->
+                <div class="controls">
+                    <button class="control-btn play-btn" id="playBtn">Start Match</button>
+                    <button class="control-btn cheer-btn" id="cheerBtn">Super Cheer!</button>
+                    <button class="control-btn speed-btn" id="speedBtn">Speed: 1x</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Super cheer overlay for confetti -->
+    <div class="super-cheer-overlay" id="cheerOverlay"></div>
+
+    <script>
+        // Game state
+        let homeScore = 0;
+        let awayScore = 0;
+        let homeShots = 0;
+        let awayShots = 0;
+        let homeFouls = 0;
+        let awayFouls = 0;
+        let possession = 50;
+        let matchMinutes = 0;
+        let matchSeconds = 0;
+        let matchRunning = false;
+        let matchSpeed = 1;
+        let gameLoopId = null;
+        let lastTime = 0;
+
+        // Ball state
+        let ballX = 50;
+        let ballY = 50;
+        let ballHolder = null;
+
+        // Player positions (percentages)
+        const playerPositions = {
+            // Team Poop
+            poopGK: { x: 5, y: 50, baseX: 5, baseY: 50 },
+            poopDef: { x: 20, y: 50, baseX: 20, baseY: 50 },
+            poopMid1: { x: 35, y: 30, baseX: 35, baseY: 30 },
+            poopMid2: { x: 35, y: 70, baseX: 35, baseY: 70 },
+            poopFwd: { x: 45, y: 50, baseX: 45, baseY: 50 },
+            // Team TP
+            tpGK: { x: 95, y: 50, baseX: 95, baseY: 50 },
+            tpDef: { x: 80, y: 50, baseX: 80, baseY: 50 },
+            tpMid1: { x: 65, y: 30, baseX: 65, baseY: 30 },
+            tpMid2: { x: 65, y: 70, baseX: 65, baseY: 70 },
+            tpFwd: { x: 55, y: 50, baseX: 55, baseY: 50 }
+        };
+
+        const poopPlayers = ['poopGK', 'poopDef', 'poopMid1', 'poopMid2', 'poopFwd'];
+        const tpPlayers = ['tpGK', 'tpDef', 'tpMid1', 'tpMid2', 'tpFwd'];
+
+        // DOM elements
+        const field = document.getElementById('field');
+        const ball = document.getElementById('ball');
+        const goalOverlay = document.getElementById('goalOverlay');
+        const eventPopup = document.getElementById('eventPopup');
+        const commentary = document.getElementById('commentary');
+        const eventsLog = document.getElementById('eventsLog');
+        const playBtn = document.getElementById('playBtn');
+        const cheerBtn = document.getElementById('cheerBtn');
+        const speedBtn = document.getElementById('speedBtn');
+
+        // Commentary
+        const commentaries = {
+            start: [
+                "The referee blows the whistle - we're underway!",
+                "And the match begins! Great atmosphere here today.",
+                "Kick-off! Let's see what these teams can produce."
+            ],
+            possession: [
+                "Nice passing in the midfield.",
+                "Patient build-up play here.",
+                "Looking for an opening...",
+                "Good ball control.",
+                "Switching the play."
+            ],
+            shot: [
+                "He shoots!",
+                "A strike at goal!",
+                "Testing the keeper!",
+                "What an effort!"
+            ],
+            save: [
+                "Saved! Great reflexes!",
+                "The keeper denies them!",
+                "What a stop!",
+                "Brilliant save!"
+            ],
+            goal: [
+                "GOAL! Fantastic finish!",
+                "IT'S IN! The crowd erupts!",
+                "GOOOAL! What a strike!",
+                "HE SCORES!"
+            ],
+            miss: [
+                "Just wide!",
+                "Over the bar!",
+                "Missed the target.",
+                "Off target!"
+            ],
+            foul: [
+                "That's a foul.",
+                "Free kick given.",
+                "The referee blows.",
+                "Foul play there."
+            ],
+            halftime: ["Half time! What a first half."],
+            fulltime: ["Full time! What a match!"]
+        };
+
+        // Initialize
+        function init() {
+            // Set initial player positions
+            Object.keys(playerPositions).forEach(id => {
+                updatePlayerPosition(id);
+            });
+
+            // Initialize ball at center
+            updateBallPosition(50, 50);
+
+            // Create crowd
+            const poopCrowd = document.getElementById('poopCrowd');
+            const tpCrowd = document.getElementById('tpCrowd');
+            for (let i = 0; i < 25; i++) {
+                const fan1 = document.createElement('div');
+                fan1.className = 'fan poop-fan';
+                fan1.style.animationDelay = (Math.random() * 0.5) + 's';
+                poopCrowd.appendChild(fan1);
+
+                const fan2 = document.createElement('div');
+                fan2.className = 'fan tp-fan';
+                fan2.style.animationDelay = (Math.random() * 0.5) + 's';
+                tpCrowd.appendChild(fan2);
+            }
+
+            updateDisplay();
+        }
+
+        function updatePlayerPosition(id) {
+            const player = document.getElementById(id);
+            const pos = playerPositions[id];
+            if (id.startsWith('tp')) {
+                player.style.right = (100 - pos.x) + '%';
+                player.style.left = 'auto';
+            } else {
+                player.style.left = pos.x + '%';
+                player.style.right = 'auto';
+            }
+            player.style.top = pos.y + '%';
+        }
+
+        function updateBallPosition(x, y) {
+            ballX = x;
+            ballY = y;
+            ball.style.left = x + '%';
+            ball.style.top = y + '%';
+        }
+
+        function setBallHolder(playerId) {
+            document.querySelectorAll('.player').forEach(p => p.classList.remove('has-ball'));
+            if (playerId) {
+                document.getElementById(playerId).classList.add('has-ball');
+                // Move ball to player
+                const pos = playerPositions[playerId];
+                updateBallPosition(pos.x, pos.y);
+            }
+            ballHolder = playerId;
+        }
+
+        function updateDisplay() {
+            document.getElementById('homeScore').textContent = homeScore;
+            document.getElementById('awayScore').textContent = awayScore;
+            document.getElementById('homeShots').textContent = homeShots;
+            document.getElementById('awayShots').textContent = awayShots;
+            document.getElementById('homeFouls').textContent = homeFouls;
+            document.getElementById('awayFouls').textContent = awayFouls;
+            document.getElementById('homePoss').textContent = Math.round(possession) + '%';
+            document.getElementById('awayPoss').textContent = Math.round(100 - possession) + '%';
+            document.getElementById('possBar').style.width = possession + '%';
+
+            const mins = String(matchMinutes).padStart(2, '0');
+            const secs = String(matchSeconds).padStart(2, '0');
+            document.getElementById('matchTime').textContent = `${mins}:${secs}`;
+
+            if (matchMinutes >= 45 && matchMinutes < 46 && matchSeconds === 0) {
+                document.getElementById('matchPeriod').textContent = 'HALF TIME';
+            } else if (matchMinutes >= 45) {
+                document.getElementById('matchPeriod').textContent = '2ND HALF';
+            }
+        }
+
+        function updateCommentary(type) {
+            const texts = commentaries[type];
+            commentary.textContent = texts[Math.floor(Math.random() * texts.length)];
+        }
+
+        function showEvent(text) {
+            eventPopup.textContent = text;
+            eventPopup.classList.add('active');
+            setTimeout(() => eventPopup.classList.remove('active'), 1500);
+        }
+
+        function addEvent(icon, iconClass, desc) {
+            const event = document.createElement('div');
+            event.className = 'event-item';
+            event.innerHTML = `
+                <span class="event-time">${matchMinutes}'</span>
+                <span class="event-icon ${iconClass}">${icon}</span>
+                <span class="event-desc">${desc}</span>
+            `;
+            eventsLog.insertBefore(event, eventsLog.firstChild.nextSibling);
+        }
+
+        // Game loop with requestAnimationFrame for smooth updates
+        function gameLoop(timestamp) {
+            if (!matchRunning) return;
+
+            const deltaTime = timestamp - lastTime;
+
+            // Update time every 100ms (game time)
+            if (deltaTime >= 100 / matchSpeed) {
+                lastTime = timestamp;
+                matchSeconds++;
+                if (matchSeconds >= 60) {
+                    matchSeconds = 0;
+                    matchMinutes++;
+                }
+
+                if (matchMinutes === 45 && matchSeconds === 0) {
+                    updateCommentary('halftime');
+                    addEvent('HT', '', 'Half time');
+                }
+
+                if (matchMinutes >= 90) {
+                    endMatch();
+                    return;
+                }
+
+                updateDisplay();
+            }
+
+            gameLoopId = requestAnimationFrame(gameLoop);
+        }
+
+        // Simulation tick (runs faster for smoother movement)
+        let simInterval;
+        function simulationTick() {
+            if (!matchRunning) return;
+
+            const isPoopTeam = Math.random() > 0.5;
+            const action = Math.random();
+
+            // Update possession
+            possession = Math.max(30, Math.min(70, possession + (isPoopTeam ? 1 : -1) * (Math.random() - 0.4)));
+
+            // Move outfield players
+            [...poopPlayers, ...tpPlayers].forEach(id => {
+                if (id.includes('GK')) return;
+                const pos = playerPositions[id];
+                const isPoopPlayer = id.startsWith('poop');
+
+                // Move towards ball or base position
+                let targetX = pos.baseX + (Math.random() - 0.5) * 20;
+                let targetY = pos.baseY + (Math.random() - 0.5) * 25;
+
+                // Clamp positions
+                if (isPoopPlayer) {
+                    targetX = Math.max(10, Math.min(48, targetX));
+                } else {
+                    targetX = Math.max(52, Math.min(90, targetX));
+                }
+                targetY = Math.max(10, Math.min(90, targetY));
+
+                // Smooth movement
+                pos.x += (targetX - pos.x) * 0.15;
+                pos.y += (targetY - pos.y) * 0.15;
+
+                updatePlayerPosition(id);
+            });
+
+            // Select ball holder
+            const team = isPoopTeam ? poopPlayers : tpPlayers;
+            const newHolder = team[Math.floor(Math.random() * team.length)];
+            setBallHolder(newHolder);
+
+            // Actions
+            if (action > 0.92) {
+                // Shot!
+                if (isPoopTeam) homeShots++;
+                else awayShots++;
+
+                updateCommentary('shot');
+                showEvent('SHOT!');
+                addEvent('S', 'shot', `${isPoopTeam ? 'Team Poop' : 'Team TP'} shoots`);
+
+                // Move ball towards goal
+                const goalX = isPoopTeam ? 95 : 5;
+                updateBallPosition(goalX, 45 + Math.random() * 10);
+
+                setTimeout(() => {
+                    const outcome = Math.random();
+                    if (outcome > 0.7) {
+                        // GOAL!
+                        if (isPoopTeam) homeScore++;
+                        else awayScore++;
+
+                        updateCommentary('goal');
+                        showEvent('GOAL!');
+                        addEvent('G', 'goal', `GOAL! ${isPoopTeam ? 'Team Poop' : 'Team TP'}`);
+
+                        goalOverlay.classList.add('active');
+                        setTimeout(() => {
+                            goalOverlay.classList.remove('active');
+                            updateBallPosition(50, 50);
+                        }, 2000);
+                    } else if (outcome > 0.35) {
+                        updateCommentary('save');
+                        addEvent('SV', 'save', `Save by ${isPoopTeam ? 'TP' : 'Poop'} keeper`);
+                    } else {
+                        updateCommentary('miss');
+                    }
+                    updateDisplay();
+                }, 800);
+
+            } else if (action > 0.88) {
+                // Foul
+                if (isPoopTeam) awayFouls++;
+                else homeFouls++;
+                updateCommentary('foul');
+                addEvent('F', 'foul', `Foul by ${isPoopTeam ? 'Team TP' : 'Team Poop'}`);
+                updateDisplay();
+
+            } else if (action > 0.6) {
+                if (Math.random() > 0.7) {
+                    updateCommentary('possession');
+                }
+            }
+        }
+
+        function startMatch() {
+            if (matchRunning) {
+                matchRunning = false;
+                cancelAnimationFrame(gameLoopId);
+                clearInterval(simInterval);
+                playBtn.textContent = 'Resume';
+                return;
+            }
+
+            matchRunning = true;
+            playBtn.textContent = 'Pause';
+
+            if (matchMinutes === 0 && matchSeconds === 0) {
+                updateCommentary('start');
+            }
+
+            lastTime = performance.now();
+            gameLoopId = requestAnimationFrame(gameLoop);
+            simInterval = setInterval(simulationTick, 800 / matchSpeed);
+        }
+
+        function endMatch() {
+            matchRunning = false;
+            cancelAnimationFrame(gameLoopId);
+            clearInterval(simInterval);
+            updateCommentary('fulltime');
+            addEvent('FT', '', 'Full time');
+            playBtn.textContent = 'New Match';
+            playBtn.onclick = resetMatch;
+        }
+
+        function resetMatch() {
+            homeScore = 0;
+            awayScore = 0;
+            homeShots = 0;
+            awayShots = 0;
+            homeFouls = 0;
+            awayFouls = 0;
+            possession = 50;
+            matchMinutes = 0;
+            matchSeconds = 0;
+            ballHolder = null;
+
+            // Reset positions
+            Object.keys(playerPositions).forEach(id => {
+                playerPositions[id].x = playerPositions[id].baseX;
+                playerPositions[id].y = playerPositions[id].baseY;
+                updatePlayerPosition(id);
+            });
+
+            updateBallPosition(50, 50);
+            document.querySelectorAll('.player').forEach(p => p.classList.remove('has-ball'));
+
+            document.getElementById('matchPeriod').textContent = '1ST HALF';
+            eventsLog.innerHTML = '<div class="event-item"><span class="event-time">00\'</span><span class="event-icon" style="background: #4caf50;">K</span><span class="event-desc">Kick-off!</span></div>';
+            commentary.textContent = 'Ready for kick-off!';
+            playBtn.textContent = 'Start Match';
+            playBtn.onclick = startMatch;
+            updateDisplay();
+        }
+
+        // Team Poop boosts
+        let teamSpirit = 0;
+        let attackBoost = 0;
+        let defenseBoost = 0;
+        let luckBoost = 0;
+        const boostDuration = 15000; // 15 seconds
+
+        const cheerOverlay = document.getElementById('cheerOverlay');
+        const spiritMeter = document.getElementById('spiritMeter');
+        const spiritValue = document.getElementById('spiritValue');
+        const powerIndicator = document.getElementById('powerIndicator');
+
+        function updateSpirit() {
+            spiritMeter.style.width = teamSpirit + '%';
+            spiritValue.textContent = teamSpirit + '%';
+        }
+
+        function updatePowerIndicator() {
+            let badges = '';
+            if (attackBoost > 0) badges += '<span class="power-badge attack">ATTACK UP!</span>';
+            if (defenseBoost > 0) badges += '<span class="power-badge defense">DEFENSE UP!</span>';
+            if (luckBoost > 0) badges += '<span class="power-badge luck">LUCKY!</span>';
+            powerIndicator.innerHTML = badges;
+        }
+
+        // Create confetti
+        function createConfetti(count = 50) {
+            const colors = ['#8d6e63', '#ffd700', '#ff5722', '#4caf50', '#2196f3', '#e91e63'];
+            const shapes = ['square', 'circle', 'triangle'];
+
+            for (let i = 0; i < count; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti ' + shapes[Math.floor(Math.random() * shapes.length)];
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.top = '-20px';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (1.5 + Math.random()) + 's';
+                confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+                cheerOverlay.appendChild(confetti);
+
+                setTimeout(() => confetti.remove(), 3000);
+            }
+        }
+
+        // Create fireworks
+        function createFirework(x, y) {
+            const colors = ['#ffd700', '#ff5722', '#e91e63', '#4caf50'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            for (let i = 0; i < 12; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework';
+                particle.style.left = x + '%';
+                particle.style.top = y + '%';
+                particle.style.background = color;
+                particle.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+                particle.style.transform = `rotate(${i * 30}deg) translateY(-30px)`;
+                cheerOverlay.appendChild(particle);
+
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
+        // Create floating cheer text
+        function createCheerText(text, color = '#ffd700') {
+            const cheerText = document.createElement('div');
+            cheerText.className = 'cheer-text';
+            cheerText.textContent = text;
+            cheerText.style.color = color;
+            cheerText.style.left = (20 + Math.random() * 60) + '%';
+            cheerText.style.top = (40 + Math.random() * 30) + '%';
+            cheerOverlay.appendChild(cheerText);
+
+            setTimeout(() => cheerText.remove(), 1500);
+        }
+
+        // Cheer loud (morale boost)
+        document.getElementById('boostMorale').addEventListener('click', () => {
+            teamSpirit = Math.min(100, teamSpirit + 10);
+            updateSpirit();
+
+            // Visual effects
+            createConfetti(30);
+            createCheerText('GO POOP!', '#8d6e63');
+
+            // Fan wave
+            document.querySelectorAll('.fan.poop-fan').forEach((fan, i) => {
+                fan.style.animation = 'none';
+                fan.offsetHeight;
+                fan.style.animation = 'fan-wave 0.1s ease-in-out 10';
+            });
+
+            showEvent('TEAM SPIRIT +10!');
+            addEvent('C', 'goal', 'Crowd cheers for Team Poop!');
+
+            // Spirit bonus effect on possession
+            if (matchRunning) {
+                possession = Math.min(70, possession + 3);
+                updateDisplay();
+            }
+        });
+
+        // Boost attack
+        document.getElementById('boostAttack').addEventListener('click', function() {
+            if (attackBoost > 0) return;
+
+            teamSpirit = Math.min(100, teamSpirit + 5);
+            attackBoost = 1;
+            updateSpirit();
+            updatePowerIndicator();
+
+            createFirework(30, 40);
+            createFirework(70, 40);
+            createCheerText('ATTACK!', '#f44336');
+            showEvent('ATTACK BOOST!');
+
+            this.disabled = true;
+            setTimeout(() => {
+                attackBoost = 0;
+                this.disabled = false;
+                updatePowerIndicator();
+            }, boostDuration);
+        });
+
+        // Boost defense
+        document.getElementById('boostDefense').addEventListener('click', function() {
+            if (defenseBoost > 0) return;
+
+            teamSpirit = Math.min(100, teamSpirit + 5);
+            defenseBoost = 1;
+            updateSpirit();
+            updatePowerIndicator();
+
+            createConfetti(20);
+            createCheerText('DEFENSE!', '#2196f3');
+            showEvent('DEFENSE BOOST!');
+
+            this.disabled = true;
+            setTimeout(() => {
+                defenseBoost = 0;
+                this.disabled = false;
+                updatePowerIndicator();
+            }, boostDuration);
+        });
+
+        // Lucky charm
+        document.getElementById('boostLuck').addEventListener('click', function() {
+            if (luckBoost > 0) return;
+
+            teamSpirit = Math.min(100, teamSpirit + 5);
+            luckBoost = 1;
+            updateSpirit();
+            updatePowerIndicator();
+
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createFirework(20 + Math.random() * 60, 30 + Math.random() * 40);
+                }, i * 200);
+            }
+            createCheerText('LUCKY!', '#ffd700');
+            showEvent('LUCK ACTIVATED!');
+
+            this.disabled = true;
+            setTimeout(() => {
+                luckBoost = 0;
+                this.disabled = false;
+                updatePowerIndicator();
+            }, boostDuration);
+        });
+
+        // Super cheer (big button)
+        cheerBtn.addEventListener('click', () => {
+            // Massive confetti
+            createConfetti(100);
+
+            // Multiple fireworks
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    createFirework(10 + Math.random() * 80, 20 + Math.random() * 60);
+                }, i * 150);
+            }
+
+            // Multiple cheer texts
+            const cheers = ['GO POOP!', 'YEAH!', 'WOOO!', 'COME ON!'];
+            cheers.forEach((text, i) => {
+                setTimeout(() => createCheerText(text, i % 2 === 0 ? '#ffd700' : '#8d6e63'), i * 300);
+            });
+
+            // All fans go crazy
+            document.querySelectorAll('.fan').forEach((fan, i) => {
+                fan.style.animation = 'none';
+                fan.offsetHeight;
+                fan.style.animation = 'fan-wave 0.08s ease-in-out 15';
+            });
+
+            // Big spirit boost
+            teamSpirit = Math.min(100, teamSpirit + 20);
+            updateSpirit();
+
+            showEvent('SUPER CHEER!');
+            if (matchRunning) {
+                possession = Math.min(75, possession + 5);
+                updateDisplay();
+            }
+        });
+
+        // Speed control
+        speedBtn.addEventListener('click', () => {
+            matchSpeed = matchSpeed === 1 ? 2 : matchSpeed === 2 ? 4 : 1;
+            speedBtn.textContent = `Speed: ${matchSpeed}x`;
+
+            if (matchRunning) {
+                clearInterval(simInterval);
+                simInterval = setInterval(simulationTick, 800 / matchSpeed);
+            }
+        });
+
+        // Initialize
+        playBtn.addEventListener('click', startMatch);
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poop Land Theme Park</title>
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="page-styles.css">
+    <style>
+        .park-map {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            height: 650px;
+            margin: 20px auto;
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 35%, #90EE90 35%, #228B22 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 5px solid #8B4513;
+        }
+
+        /* Sun and clouds */
+        .sun {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 3.5rem;
+            animation: sun-pulse 3s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes sun-pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(10deg); }
+        }
+
+        .cloud {
+            position: absolute;
+            font-size: 2rem;
+            z-index: 5;
+            opacity: 0.9;
+        }
+
+        .cloud1 { top: 20px; left: 10%; animation: cloud-drift 25s linear infinite; }
+        .cloud2 { top: 50px; left: 40%; animation: cloud-drift 30s linear infinite reverse; }
+        .cloud3 { top: 30px; left: 70%; animation: cloud-drift 20s linear infinite; }
+
+        @keyframes cloud-drift {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(30px); }
+        }
+
+        /* Paths */
+        .path {
+            position: absolute;
+            background: linear-gradient(to bottom, #DEB887, #D2B48C);
+            border: 2px solid #8B7355;
+        }
+
+        .path-main {
+            width: 70%;
+            height: 25px;
+            left: 15%;
+            top: 55%;
+            border-radius: 5px;
+        }
+
+        .path-v1 { width: 25px; height: 150px; left: 20%; top: 35%; border-radius: 5px; }
+        .path-v2 { width: 25px; height: 150px; right: 20%; top: 35%; border-radius: 5px; }
+        .path-v3 { width: 25px; height: 120px; left: 50%; top: 55%; transform: translateX(-50%); border-radius: 5px; }
+
+        /* ========== ROLLER COASTER ========== */
+        .coaster-container {
+            position: absolute;
+            left: 3%;
+            top: 8%;
+            width: 200px;
+            height: 180px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .coaster-container:hover {
+            transform: scale(1.05);
+        }
+
+        .coaster-track {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .coaster-track svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .track-line {
+            fill: none;
+            stroke: #8B4513;
+            stroke-width: 4;
+        }
+
+        .track-supports {
+            stroke: #654321;
+            stroke-width: 2;
+        }
+
+        .coaster-car {
+            position: absolute;
+            font-size: 1.5rem;
+            offset-path: path('M10,150 Q30,150 50,100 Q70,50 100,50 Q130,50 150,100 Q170,150 190,150');
+            animation: ride-coaster 3s linear infinite;
+        }
+
+        @keyframes ride-coaster {
+            0% { offset-distance: 0%; }
+            100% { offset-distance: 100%; }
+        }
+
+        .coaster-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.95);
+            padding: 5px 12px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #8B4513;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* ========== FERRIS WHEEL ========== */
+        .ferris-container {
+            position: absolute;
+            right: 5%;
+            top: 5%;
+            width: 160px;
+            height: 180px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .ferris-container:hover {
+            transform: scale(1.05);
+        }
+
+        .ferris-wheel {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            top: 10px;
+            left: 10px;
+            border: 6px solid #8B4513;
+            border-radius: 50%;
+            animation: ferris-spin 10s linear infinite;
+        }
+
+        @keyframes ferris-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .ferris-spoke {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            top: 0;
+            background: #654321;
+            transform-origin: center center;
+        }
+
+        .ferris-spoke:nth-child(1) { transform: translateX(-50%) rotate(0deg); }
+        .ferris-spoke:nth-child(2) { transform: translateX(-50%) rotate(45deg); }
+        .ferris-spoke:nth-child(3) { transform: translateX(-50%) rotate(90deg); }
+        .ferris-spoke:nth-child(4) { transform: translateX(-50%) rotate(135deg); }
+
+        .ferris-cart {
+            position: absolute;
+            font-size: 1.2rem;
+            animation: ferris-cart-stable 10s linear infinite;
+        }
+
+        .ferris-cart:nth-child(5) { top: -15px; left: 50%; transform: translateX(-50%); animation-delay: 0s; }
+        .ferris-cart:nth-child(6) { top: 50%; right: -15px; transform: translateY(-50%); animation-delay: -2.5s; }
+        .ferris-cart:nth-child(7) { bottom: -15px; left: 50%; transform: translateX(-50%); animation-delay: -5s; }
+        .ferris-cart:nth-child(8) { top: 50%; left: -15px; transform: translateY(-50%); animation-delay: -7.5s; }
+
+        @keyframes ferris-cart-stable {
+            0%, 100% { transform: rotate(0deg); }
+        }
+
+        .ferris-stand {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 50px solid #654321;
+        }
+
+        .ferris-base {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 10px;
+            background: #8B4513;
+            border-radius: 5px;
+        }
+
+        /* ========== CAROUSEL ========== */
+        .carousel-container {
+            position: absolute;
+            left: 22%;
+            top: 38%;
+            width: 120px;
+            height: 120px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .carousel-container:hover {
+            transform: scale(1.05);
+        }
+
+        .carousel-top {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 30px;
+            background: linear-gradient(135deg, #FF6B6B, #C0392B);
+            border-radius: 50px 50px 0 0;
+            border: 3px solid #8B0000;
+        }
+
+        .carousel-top::after {
+            content: '🎪';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+        }
+
+        .carousel-platform {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 110px;
+            height: 110px;
+            background: linear-gradient(135deg, #FDCB6E, #F39C12);
+            border-radius: 50%;
+            border: 4px solid #8B4513;
+            animation: carousel-spin 6s linear infinite;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        @keyframes carousel-spin {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        .carousel-horse {
+            position: absolute;
+            font-size: 1.5rem;
+            transform-origin: center center;
+        }
+
+        .carousel-horse:nth-child(1) { top: 5px; left: 50%; transform: translateX(-50%); }
+        .carousel-horse:nth-child(2) { top: 50%; right: 5px; transform: translateY(-50%); }
+        .carousel-horse:nth-child(3) { bottom: 5px; left: 50%; transform: translateX(-50%); }
+        .carousel-horse:nth-child(4) { top: 50%; left: 5px; transform: translateY(-50%); }
+
+        .carousel-pole {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 70px;
+            background: linear-gradient(90deg, #C0C0C0, #FFF, #C0C0C0);
+            border-radius: 4px;
+            z-index: 10;
+        }
+
+        /* ========== SPLASH MOUNTAIN ========== */
+        .splash-container {
+            position: absolute;
+            left: 42%;
+            top: 8%;
+            width: 140px;
+            height: 150px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .splash-container:hover {
+            transform: scale(1.05);
+        }
+
+        .splash-mountain {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 100px solid #8B4513;
+        }
+
+        .splash-mountain::before {
+            content: '';
+            position: absolute;
+            top: 30px;
+            left: -30px;
+            width: 60px;
+            height: 8px;
+            background: linear-gradient(90deg, transparent, #4169E1, transparent);
+            transform: rotate(-45deg);
+        }
+
+        .splash-track {
+            position: absolute;
+            bottom: 20px;
+            left: 10px;
+            width: 120px;
+            height: 80px;
+            border: 4px solid #654321;
+            border-radius: 0 0 20px 20px;
+            border-top: none;
+            background: transparent;
+        }
+
+        .splash-boat {
+            position: absolute;
+            font-size: 1.3rem;
+            animation: splash-ride 4s ease-in-out infinite;
+        }
+
+        @keyframes splash-ride {
+            0% { bottom: 80px; left: 20px; transform: rotate(0deg); }
+            30% { bottom: 100px; left: 60px; transform: rotate(-30deg); }
+            50% { bottom: 60px; left: 100px; transform: rotate(45deg); }
+            70% { bottom: 25px; left: 80px; transform: rotate(0deg); }
+            100% { bottom: 80px; left: 20px; transform: rotate(0deg); }
+        }
+
+        .splash-water {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            animation: splash-water 4s ease-in-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes splash-water {
+            0%, 40%, 100% { opacity: 0; transform: translateX(-50%) scale(0.5); }
+            50%, 60% { opacity: 1; transform: translateX(-50%) scale(1.5); }
+        }
+
+        /* ========== HAUNTED HOUSE ========== */
+        .haunted-container {
+            position: absolute;
+            right: 8%;
+            bottom: 18%;
+            width: 130px;
+            height: 140px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .haunted-container:hover {
+            transform: scale(1.05);
+        }
+
+        .haunted-house {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 80px;
+            background: linear-gradient(135deg, #2C2C2C, #1a1a1a);
+            border: 3px solid #111;
+        }
+
+        .haunted-roof {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 60px solid transparent;
+            border-right: 60px solid transparent;
+            border-bottom: 40px solid #4a0000;
+        }
+
+        .haunted-window {
+            position: absolute;
+            width: 20px;
+            height: 25px;
+            background: #FFD700;
+            border: 2px solid #111;
+            animation: window-flicker 2s ease-in-out infinite;
+        }
+
+        .haunted-window:nth-child(1) { top: 35%; left: 15%; animation-delay: 0s; }
+        .haunted-window:nth-child(2) { top: 35%; right: 15%; animation-delay: 0.5s; }
+
+        @keyframes window-flicker {
+            0%, 100% { background: #FFD700; }
+            50% { background: #FF6B00; }
+            75% { background: #333; }
+        }
+
+        .haunted-door {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 25px;
+            height: 35px;
+            background: #4a2c00;
+            border: 2px solid #111;
+            border-bottom: none;
+        }
+
+        .haunted-ghost {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: ghost-float 3s ease-in-out infinite;
+        }
+
+        .haunted-ghost:nth-child(5) { top: -10px; left: 20%; animation-delay: 0s; }
+        .haunted-ghost:nth-child(6) { top: 0; right: 10%; animation-delay: 1s; }
+
+        @keyframes ghost-float {
+            0%, 100% { transform: translateY(0) rotate(-5deg); opacity: 0.7; }
+            50% { transform: translateY(-15px) rotate(5deg); opacity: 1; }
+        }
+
+        /* ========== FOOD COURT ========== */
+        .food-container {
+            position: absolute;
+            right: 22%;
+            top: 38%;
+            width: 110px;
+            height: 100px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .food-container:hover {
+            transform: scale(1.05);
+        }
+
+        .food-stand {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90px;
+            height: 50px;
+            background: linear-gradient(135deg, #FF6B6B, #E74C3C);
+            border: 3px solid #8B0000;
+            border-radius: 5px;
+        }
+
+        .food-awning {
+            position: absolute;
+            bottom: 65px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 25px;
+            background: repeating-linear-gradient(
+                90deg,
+                #FF6B6B 0px,
+                #FF6B6B 12px,
+                #FFF 12px,
+                #FFF 24px
+            );
+            border-radius: 5px 5px 0 0;
+            border: 2px solid #8B0000;
+        }
+
+        .food-counter {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 15px;
+            background: #8B4513;
+            border-radius: 3px;
+        }
+
+        .food-items {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+            font-size: 1.2rem;
+        }
+
+        .food-steam {
+            position: absolute;
+            top: -5px;
+            left: 30%;
+            font-size: 0.8rem;
+            animation: steam-rise 1.5s ease-out infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes steam-rise {
+            0% { transform: translateY(0); opacity: 0.7; }
+            100% { transform: translateY(-20px); opacity: 0; }
+        }
+
+        /* ========== GIFT SHOP ========== */
+        .gift-container {
+            position: absolute;
+            left: 8%;
+            bottom: 18%;
+            width: 110px;
+            height: 100px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .gift-container:hover {
+            transform: scale(1.05);
+        }
+
+        .gift-shop {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 85px;
+            height: 55px;
+            background: linear-gradient(135deg, #9B59B6, #8E44AD);
+            border: 3px solid #5B2C6F;
+            border-radius: 5px;
+        }
+
+        .gift-roof {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 95px;
+            height: 20px;
+            background: #5B2C6F;
+            border-radius: 3px;
+        }
+
+        .gift-sign {
+            position: absolute;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #FFD700;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.6rem;
+            font-weight: bold;
+            color: #5B2C6F;
+        }
+
+        .gift-window {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 30px;
+            background: #E8DAEF;
+            border: 2px solid #5B2C6F;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+        }
+
+        /* ========== ENTRANCE ========== */
+        .entrance-container {
+            position: absolute;
+            left: 50%;
+            bottom: 5%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 90px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .entrance-container:hover {
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        .entrance-arch {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 60px;
+            border: 8px solid #8B4513;
+            border-bottom: none;
+            border-radius: 50px 50px 0 0;
+            background: linear-gradient(to bottom, #87CEEB, transparent);
+        }
+
+        .entrance-pillar {
+            position: absolute;
+            bottom: 10px;
+            width: 15px;
+            height: 50px;
+            background: linear-gradient(90deg, #A0522D, #8B4513, #A0522D);
+        }
+
+        .entrance-pillar.left { left: 5px; }
+        .entrance-pillar.right { right: 5px; }
+
+        .entrance-sign {
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            padding: 5px 15px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #8B4513;
+            white-space: nowrap;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+            border: 2px solid #8B4513;
+        }
+
+        .entrance-lights {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .entrance-light {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: light-blink 1s ease-in-out infinite;
+        }
+
+        .entrance-light:nth-child(1) { background: #FF6B6B; animation-delay: 0s; }
+        .entrance-light:nth-child(2) { background: #55EFC4; animation-delay: 0.2s; }
+        .entrance-light:nth-child(3) { background: #74B9FF; animation-delay: 0.4s; }
+        .entrance-light:nth-child(4) { background: #FDCB6E; animation-delay: 0.6s; }
+        .entrance-light:nth-child(5) { background: #A29BFE; animation-delay: 0.8s; }
+
+        @keyframes light-blink {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        /* Labels */
+        .ride-label {
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.95);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #8B4513;
+            white-space: nowrap;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        /* Stats Panel */
+        .park-stats {
+            display: flex;
+            justify-content: space-around;
+            background: #FFF8DC;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .park-stat {
+            text-align: center;
+        }
+
+        .park-stat-label {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        .park-stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #8B4513;
+        }
+
+        /* Popup styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 999;
+            display: none;
+        }
+
+        .popup-overlay.active {
+            display: block;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            z-index: 1000;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            display: none;
+        }
+
+        .popup.active {
+            display: block;
+            animation: popup-in 0.3s ease;
+        }
+
+        @keyframes popup-in {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .popup-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .popup-title {
+            font-size: 1.5rem;
+            color: #8B4513;
+            margin-bottom: 10px;
+        }
+
+        .popup-desc {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .popup-stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 15px 0;
+            padding: 10px;
+            background: #FFF8DC;
+            border-radius: 10px;
+        }
+
+        .popup-stat {
+            text-align: center;
+        }
+
+        .popup-stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #8B4513;
+        }
+
+        .popup-stat-label {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        .popup-btn {
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-family: inherit;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        .popup-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .ride-btn {
+            background: linear-gradient(145deg, #55EFC4, #00B894);
+            color: white;
+        }
+
+        .close-btn {
+            background: #DDD;
+            color: #666;
+        }
+
+        /* Ride animation overlay */
+        .ride-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .ride-animation.active {
+            display: flex;
+        }
+
+        .ride-visual {
+            font-size: 8rem;
+            animation: ride-shake 0.3s ease-in-out infinite;
+        }
+
+        @keyframes ride-shake {
+            0%, 100% { transform: rotate(-10deg) scale(1); }
+            50% { transform: rotate(10deg) scale(1.1); }
+        }
+
+        .ride-text {
+            color: white;
+            font-size: 2rem;
+            margin-top: 20px;
+            animation: text-pulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes text-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Visitors */
+        .visitor {
+            position: absolute;
+            font-size: 1.2rem;
+            z-index: 50;
+            transition: all 3s ease-in-out;
+        }
+
+        /* Trees */
+        .tree {
+            position: absolute;
+            font-size: 2rem;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="page-body">
+    <a href="../index.html" class="back-button">Back to Poop</a>
+
+    <div class="page-container" style="max-width: 950px;">
+        <h1 class="page-title">Welcome to Poop Land!</h1>
+
+        <div class="content-box">
+            <div class="park-stats">
+                <div class="park-stat">
+                    <div class="park-stat-label">Tickets</div>
+                    <div class="park-stat-value" id="tickets">🎟️ 10</div>
+                </div>
+                <div class="park-stat">
+                    <div class="park-stat-label">Rides</div>
+                    <div class="park-stat-value" id="rides">0</div>
+                </div>
+                <div class="park-stat">
+                    <div class="park-stat-label">Happiness</div>
+                    <div class="park-stat-value" id="happiness">😊 50%</div>
+                </div>
+            </div>
+
+            <div class="park-map" id="parkMap">
+                <!-- Sky elements -->
+                <div class="sun">☀️</div>
+                <div class="cloud cloud1">☁️</div>
+                <div class="cloud cloud2">⛅</div>
+                <div class="cloud cloud3">☁️</div>
+
+                <!-- Paths -->
+                <div class="path path-main"></div>
+                <div class="path path-v1"></div>
+                <div class="path path-v2"></div>
+                <div class="path path-v3"></div>
+
+                <!-- Trees -->
+                <div class="tree" style="left: 5%; top: 45%;">🌳</div>
+                <div class="tree" style="right: 5%; top: 45%;">🌲</div>
+                <div class="tree" style="left: 35%; top: 32%;">🌴</div>
+                <div class="tree" style="right: 35%; top: 32%;">🌳</div>
+
+                <!-- ROLLER COASTER -->
+                <div class="coaster-container" data-ride="coaster">
+                    <div class="coaster-track">
+                        <svg viewBox="0 0 200 180">
+                            <!-- Track supports -->
+                            <line class="track-supports" x1="30" y1="150" x2="30" y2="180"/>
+                            <line class="track-supports" x1="70" y1="80" x2="70" y2="180"/>
+                            <line class="track-supports" x1="100" y1="50" x2="100" y2="180"/>
+                            <line class="track-supports" x1="130" y1="80" x2="130" y2="180"/>
+                            <line class="track-supports" x1="170" y1="150" x2="170" y2="180"/>
+                            <!-- Track -->
+                            <path class="track-line" d="M10,150 Q30,150 50,100 Q70,50 100,50 Q130,50 150,100 Q170,150 190,150"/>
+                            <!-- Track ties -->
+                            <path class="track-line" d="M10,155 Q30,155 50,105 Q70,55 100,55 Q130,55 150,105 Q170,155 190,155" stroke-dasharray="5,10"/>
+                        </svg>
+                    </div>
+                    <div class="coaster-car">🎢</div>
+                    <div class="coaster-car" style="animation-delay: -1.5s;">🎢</div>
+                    <div class="ride-label">Poop Coaster</div>
+                </div>
+
+                <!-- FERRIS WHEEL -->
+                <div class="ferris-container" data-ride="ferris">
+                    <div class="ferris-wheel">
+                        <div class="ferris-spoke"></div>
+                        <div class="ferris-spoke"></div>
+                        <div class="ferris-spoke"></div>
+                        <div class="ferris-spoke"></div>
+                        <div class="ferris-cart">🚃</div>
+                        <div class="ferris-cart">🚃</div>
+                        <div class="ferris-cart">🚃</div>
+                        <div class="ferris-cart">🚃</div>
+                    </div>
+                    <div class="ferris-stand"></div>
+                    <div class="ferris-base"></div>
+                    <div class="ride-label">Dookie Wheel</div>
+                </div>
+
+                <!-- CAROUSEL -->
+                <div class="carousel-container" data-ride="carousel">
+                    <div class="carousel-top"></div>
+                    <div class="carousel-pole"></div>
+                    <div class="carousel-platform">
+                        <div class="carousel-horse">🐴</div>
+                        <div class="carousel-horse">🦄</div>
+                        <div class="carousel-horse">🐴</div>
+                        <div class="carousel-horse">🦄</div>
+                    </div>
+                    <div class="ride-label">Turd Carousel</div>
+                </div>
+
+                <!-- SPLASH MOUNTAIN -->
+                <div class="splash-container" data-ride="splash">
+                    <div class="splash-mountain"></div>
+                    <div class="splash-track"></div>
+                    <div class="splash-boat">🚣</div>
+                    <div class="splash-water">💦</div>
+                    <div class="ride-label">Splash Mountain</div>
+                </div>
+
+                <!-- FOOD COURT -->
+                <div class="food-container" data-ride="food">
+                    <div class="food-awning"></div>
+                    <div class="food-stand">
+                        <div class="food-items">
+                            <span>🍔</span>
+                            <span>🍕</span>
+                            <span>🍦</span>
+                        </div>
+                        <div class="food-steam">💨</div>
+                        <div class="food-steam" style="left: 50%; animation-delay: 0.5s;">💨</div>
+                        <div class="food-steam" style="left: 70%; animation-delay: 1s;">💨</div>
+                    </div>
+                    <div class="food-counter"></div>
+                    <div class="ride-label">Poop Cafe</div>
+                </div>
+
+                <!-- HAUNTED HOUSE -->
+                <div class="haunted-container" data-ride="haunted">
+                    <div class="haunted-roof"></div>
+                    <div class="haunted-house">
+                        <div class="haunted-window"></div>
+                        <div class="haunted-window"></div>
+                        <div class="haunted-door"></div>
+                    </div>
+                    <div class="haunted-ghost">👻</div>
+                    <div class="haunted-ghost">👻</div>
+                    <div class="ride-label">Haunted Toilet</div>
+                </div>
+
+                <!-- GIFT SHOP -->
+                <div class="gift-container" data-ride="gift">
+                    <div class="gift-sign">GIFTS</div>
+                    <div class="gift-roof"></div>
+                    <div class="gift-shop">
+                        <div class="gift-window">🧸</div>
+                    </div>
+                    <div class="ride-label">Gift Shop</div>
+                </div>
+
+                <!-- ENTRANCE -->
+                <div class="entrance-container" data-ride="entrance">
+                    <div class="entrance-sign">🎪 POOP LAND 🎪</div>
+                    <div class="entrance-lights">
+                        <div class="entrance-light"></div>
+                        <div class="entrance-light"></div>
+                        <div class="entrance-light"></div>
+                        <div class="entrance-light"></div>
+                        <div class="entrance-light"></div>
+                    </div>
+                    <div class="entrance-arch"></div>
+                    <div class="entrance-pillar left"></div>
+                    <div class="entrance-pillar right"></div>
+                </div>
+            </div>
+
+            <p style="text-align: center; color: #888; margin-top: 10px;">
+                Click on rides to visit them!
+            </p>
+        </div>
+    </div>
+
+    <!-- Popup -->
+    <div class="popup-overlay" id="popupOverlay"></div>
+    <div class="popup" id="popup">
+        <div class="popup-icon" id="popupIcon">🎢</div>
+        <div class="popup-title" id="popupTitle">Ride Name</div>
+        <div class="popup-desc" id="popupDesc">Description</div>
+        <div class="popup-stats">
+            <div class="popup-stat">
+                <div class="popup-stat-value" id="popupWait">5 min</div>
+                <div class="popup-stat-label">Wait</div>
+            </div>
+            <div class="popup-stat">
+                <div class="popup-stat-value" id="popupCost">🎟️2</div>
+                <div class="popup-stat-label">Cost</div>
+            </div>
+            <div class="popup-stat">
+                <div class="popup-stat-value" id="popupThrill">⭐⭐⭐</div>
+                <div class="popup-stat-label">Thrill</div>
+            </div>
+        </div>
+        <div id="popupExtra"></div>
+        <button class="popup-btn ride-btn" id="rideBtn">Take the Ride!</button>
+        <button class="popup-btn close-btn" id="closeBtn">Close</button>
+    </div>
+
+    <!-- Ride Animation -->
+    <div class="ride-animation" id="rideAnimation">
+        <div class="ride-visual" id="rideVisual">🎢</div>
+        <div class="ride-text" id="rideText">WHEEEEE!</div>
+    </div>
+
+    <script>
+        let tickets = 10;
+        let rides = 0;
+        let happiness = 50;
+
+        const attractions = {
+            coaster: {
+                icon: '🎢', name: 'The Poop Coaster',
+                desc: 'A thrilling roller coaster with 3 loops and 2 big drops!',
+                wait: '15 min', cost: 3, thrill: '⭐⭐⭐⭐⭐',
+                text: 'WHEEEEEEE! 💩💨', happinessBoost: 25
+            },
+            ferris: {
+                icon: '🎡', name: 'The Dookie Wheel',
+                desc: 'See all of Poop Land from 100 feet up!',
+                wait: '5 min', cost: 2, thrill: '⭐⭐',
+                text: 'What a view! 🌅', happinessBoost: 15
+            },
+            carousel: {
+                icon: '🎠', name: 'Turd Carousel',
+                desc: 'A magical merry-go-round with enchanted horses!',
+                wait: '3 min', cost: 1, thrill: '⭐',
+                text: 'Round and round! 🎵', happinessBoost: 10
+            },
+            splash: {
+                icon: '🌊', name: 'Splash Mountain',
+                desc: 'A water ride with a massive 50-foot drop! You WILL get wet!',
+                wait: '20 min', cost: 3, thrill: '⭐⭐⭐⭐',
+                text: 'SPLASH!!! 💦💩', happinessBoost: 20
+            },
+            haunted: {
+                icon: '👻', name: 'Haunted Toilet',
+                desc: 'Enter if you dare... spooky surprises await!',
+                wait: '10 min', cost: 2, thrill: '⭐⭐⭐⭐',
+                text: 'BOO! 👻💀', happinessBoost: 18
+            },
+            food: {
+                icon: '🍔', name: 'Poop Cafe',
+                desc: 'Delicious theme park food! Try our famous Brown Burger!',
+                wait: '0 min', cost: 0, thrill: '⭐⭐⭐',
+                isFood: true
+            },
+            gift: {
+                icon: '🎁', name: 'Gift Shop',
+                desc: 'Take home a souvenir from Poop Land!',
+                wait: '0 min', cost: 0, thrill: '⭐',
+                isShop: true
+            },
+            entrance: {
+                icon: '🚪', name: 'Park Entrance',
+                desc: 'Welcome to Poop Land! Get your tickets here!',
+                wait: '0 min', cost: 0, thrill: '⭐',
+                isEntrance: true
+            }
+        };
+
+        const foods = [
+            { emoji: '🍔', name: 'Brown Burger', cost: 1, happiness: 8 },
+            { emoji: '🍕', name: 'Poop Pizza', cost: 1, happiness: 8 },
+            { emoji: '🍦', name: 'Swirl Cone', cost: 1, happiness: 10 },
+            { emoji: '🥤', name: 'Cola', cost: 1, happiness: 5 }
+        ];
+
+        const gifts = [
+            { emoji: '🧸', name: 'Poop Plushie', cost: 2 },
+            { emoji: '👕', name: 'T-Shirt', cost: 3 },
+            { emoji: '🎈', name: 'Balloon', cost: 1 }
+        ];
+
+        function updateStats() {
+            document.getElementById('tickets').textContent = '🎟️ ' + tickets;
+            document.getElementById('rides').textContent = rides;
+            let emoji = happiness >= 80 ? '🤩' : happiness >= 60 ? '😄' : happiness >= 40 ? '😊' : '😐';
+            document.getElementById('happiness').textContent = emoji + ' ' + happiness + '%';
+        }
+
+        function showPopup(rideId) {
+            const ride = attractions[rideId];
+            document.getElementById('popupIcon').textContent = ride.icon;
+            document.getElementById('popupTitle').textContent = ride.name;
+            document.getElementById('popupDesc').textContent = ride.desc;
+            document.getElementById('popupWait').textContent = ride.wait;
+            document.getElementById('popupCost').textContent = ride.cost > 0 ? '🎟️' + ride.cost : 'Free';
+            document.getElementById('popupThrill').textContent = ride.thrill;
+
+            const rideBtn = document.getElementById('rideBtn');
+            const extraDiv = document.getElementById('popupExtra');
+            extraDiv.innerHTML = '';
+
+            if (ride.isFood) {
+                rideBtn.style.display = 'none';
+                extraDiv.innerHTML = '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0;">' +
+                    foods.map((f,i) => `<button onclick="buyFood(${i})" style="font-size:2rem;padding:10px;border:2px solid #ddd;border-radius:10px;background:#fff;cursor:pointer;">${f.emoji}</button>`).join('') + '</div>';
+            } else if (ride.isShop) {
+                rideBtn.style.display = 'none';
+                extraDiv.innerHTML = '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0;">' +
+                    gifts.map((g,i) => `<button onclick="buyGift(${i})" style="font-size:2rem;padding:10px;border:2px solid #ddd;border-radius:10px;background:#fff;cursor:pointer;">${g.emoji}</button>`).join('') + '</div>';
+            } else if (ride.isEntrance) {
+                rideBtn.textContent = 'Get 5 Free Tickets!';
+                rideBtn.style.display = 'inline-block';
+                rideBtn.onclick = () => { tickets += 5; updateStats(); closePopup(); };
+            } else {
+                rideBtn.textContent = 'Take the Ride!';
+                rideBtn.style.display = 'inline-block';
+                rideBtn.onclick = () => takeRide(rideId);
+            }
+
+            document.getElementById('popup').classList.add('active');
+            document.getElementById('popupOverlay').classList.add('active');
+        }
+
+        function closePopup() {
+            document.getElementById('popup').classList.remove('active');
+            document.getElementById('popupOverlay').classList.remove('active');
+        }
+
+        function takeRide(rideId) {
+            const ride = attractions[rideId];
+            if (tickets < ride.cost) { alert('Not enough tickets!'); return; }
+
+            tickets -= ride.cost;
+            rides++;
+            happiness = Math.min(100, happiness + ride.happinessBoost);
+            updateStats();
+            closePopup();
+
+            document.getElementById('rideVisual').textContent = ride.icon;
+            document.getElementById('rideText').textContent = ride.text;
+            document.getElementById('rideAnimation').classList.add('active');
+
+            setTimeout(() => {
+                document.getElementById('rideAnimation').classList.remove('active');
+            }, 2500);
+        }
+
+        function buyFood(index) {
+            const food = foods[index];
+            if (tickets < food.cost) { alert('Not enough tickets!'); return; }
+            tickets -= food.cost;
+            happiness = Math.min(100, happiness + food.happiness);
+            updateStats();
+            alert('Yummy ' + food.name + '! 😋');
+        }
+
+        function buyGift(index) {
+            const gift = gifts[index];
+            if (tickets < gift.cost) { alert('Not enough tickets!'); return; }
+            tickets -= gift.cost;
+            happiness = Math.min(100, happiness + 5);
+            updateStats();
+            alert('You got a ' + gift.name + '! 🎉');
+        }
+
+        // Event listeners
+        document.querySelectorAll('[data-ride]').forEach(el => {
+            el.addEventListener('click', () => showPopup(el.dataset.ride));
+        });
+
+        document.getElementById('closeBtn').addEventListener('click', closePopup);
+        document.getElementById('popupOverlay').addEventListener('click', closePopup);
+
+        // Add visitors
+        function addVisitor() {
+            const visitor = document.createElement('div');
+            visitor.className = 'visitor';
+            visitor.textContent = ['🚶','🚶‍♀️','👨‍👩‍👧','🧒'][Math.floor(Math.random()*4)];
+            visitor.style.left = (15 + Math.random()*70) + '%';
+            visitor.style.top = (50 + Math.random()*25) + '%';
+            document.getElementById('parkMap').appendChild(visitor);
+            setInterval(() => {
+                visitor.style.left = (15 + Math.random()*70) + '%';
+                visitor.style.top = (50 + Math.random()*25) + '%';
+            }, 4000);
+        }
+        for(let i=0;i<6;i++) setTimeout(addVisitor, i*300);
+
+        updateStats();
+    </script>
+</body>
+</html>
