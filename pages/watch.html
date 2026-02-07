@@ -38,6 +38,22 @@
             border: 4px solid #0f0f23;
         }
 
+        .stadium-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 16px;
+            background: radial-gradient(circle at 30% -20%, rgba(255,255,255,0.28), transparent 35%),
+                        radial-gradient(circle at 70% -20%, rgba(255,255,255,0.24), transparent 35%);
+            pointer-events: none;
+            animation: lights-sweep 5s ease-in-out infinite;
+        }
+
+        @keyframes lights-sweep {
+            0%, 100% { opacity: 0.65; }
+            50% { opacity: 1; }
+        }
+
         @media (max-width: 600px) {
             .stadium-container {
                 padding: 10px;
@@ -461,7 +477,7 @@
         /* Stats Panel */
         .stats-panel {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 8px;
             margin-top: 10px;
         }
@@ -477,7 +493,7 @@
             }
 
             .stats-panel {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
                 gap: 5px;
             }
         }
@@ -965,6 +981,7 @@
             gap: 8px;
             margin-top: 10px;
             min-height: 24px;
+            flex-wrap: wrap;
         }
 
         .power-badge {
@@ -993,6 +1010,14 @@
             height: 100%;
             pointer-events: none;
             z-index: 1000;
+        }
+
+        .cheer-combo {
+            margin-top: 8px;
+            color: #ffd700;
+            font-weight: 700;
+            min-height: 22px;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -1117,6 +1142,15 @@
                             <span class="stat-away" id="awayFouls">0</span>
                         </div>
                     </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Excitement</div>
+                        <div class="stat-values">
+                            <span class="stat-home" id="excitementValue">25%</span>
+                        </div>
+                        <div class="possession-bar">
+                            <div class="possession-fill" id="excitementBar" style="width: 25%; background: linear-gradient(90deg, #ffd700, #ff5722);"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Events Log -->
@@ -1144,6 +1178,7 @@
                         </div>
                         <span class="meter-value" id="spiritValue">0%</span>
                     </div>
+                    <div class="cheer-combo" id="cheerCombo">Cheer Combo: x1</div>
                     <div class="power-indicator" id="powerIndicator"></div>
                 </div>
 
@@ -1172,9 +1207,13 @@
         let matchMinutes = 0;
         let matchSeconds = 0;
         let matchRunning = false;
+        let matchEnded = false;
         let matchSpeed = 1;
         let gameLoopId = null;
         let lastTime = 0;
+        let excitement = 25;
+        let cheerCombo = 1;
+        let lastCheerAt = 0;
 
         // Ball state
         let ballX = 50;
@@ -1210,6 +1249,9 @@
         const playBtn = document.getElementById('playBtn');
         const cheerBtn = document.getElementById('cheerBtn');
         const speedBtn = document.getElementById('speedBtn');
+        const excitementValueEl = document.getElementById('excitementValue');
+        const excitementBarEl = document.getElementById('excitementBar');
+        const cheerComboEl = document.getElementById('cheerCombo');
 
         // Commentary
         const commentaries = {
@@ -1328,6 +1370,8 @@
             document.getElementById('homePoss').textContent = Math.round(possession) + '%';
             document.getElementById('awayPoss').textContent = Math.round(100 - possession) + '%';
             document.getElementById('possBar').style.width = possession + '%';
+            excitementValueEl.textContent = `${Math.round(excitement)}%`;
+            excitementBarEl.style.width = `${Math.round(excitement)}%`;
 
             const mins = String(matchMinutes).padStart(2, '0');
             const secs = String(matchSeconds).padStart(2, '0');
@@ -1359,7 +1403,10 @@
                 <span class="event-icon ${iconClass}">${icon}</span>
                 <span class="event-desc">${desc}</span>
             `;
-            eventsLog.insertBefore(event, eventsLog.firstChild.nextSibling);
+            eventsLog.insertBefore(event, eventsLog.firstChild);
+            while (eventsLog.children.length > 9) {
+                eventsLog.removeChild(eventsLog.lastChild);
+            }
         }
 
         // Game loop with requestAnimationFrame for smooth updates
@@ -1398,7 +1445,14 @@
         function simulationTick() {
             if (!matchRunning) return;
 
-            const isPoopTeam = Math.random() > 0.5;
+            // Spirit slowly fades unless user keeps cheering
+            teamSpirit = Math.max(0, teamSpirit - 0.6);
+            updateSpirit();
+
+            // Team selection is weighted by possession + boosts + spirit
+            const poopPower = (possession / 100) + (teamSpirit / 260) + (attackBoost ? 0.18 : 0) + (luckBoost ? 0.12 : 0);
+            const tpPower = ((100 - possession) / 100) + 0.55;
+            const isPoopTeam = Math.random() < (poopPower / (poopPower + tpPower));
             const action = Math.random();
 
             // Update possession
@@ -1435,10 +1489,11 @@
             setBallHolder(newHolder);
 
             // Actions
-            if (action > 0.92) {
+            if (action > 0.90 - (excitement / 700)) {
                 // Shot!
                 if (isPoopTeam) homeShots++;
                 else awayShots++;
+                excitement = Math.min(100, excitement + 8);
 
                 updateCommentary('shot');
                 showEvent('SHOT!');
@@ -1449,11 +1504,22 @@
                 updateBallPosition(goalX, 45 + Math.random() * 10);
 
                 setTimeout(() => {
+                    let goalChance = 0.30;
+                    if (isPoopTeam) {
+                        goalChance += (attackBoost ? 0.20 : 0) + (luckBoost ? 0.12 : 0) + (teamSpirit / 700);
+                    } else {
+                        goalChance -= (defenseBoost ? 0.18 : 0) + (teamSpirit / 850);
+                    }
+                    goalChance = Math.max(0.12, Math.min(0.72, goalChance));
+
+                    const saveChance = isPoopTeam ? 0.40 - (attackBoost ? 0.08 : 0) : 0.42 + (defenseBoost ? 0.10 : 0);
                     const outcome = Math.random();
-                    if (outcome > 0.7) {
+
+                    if (outcome < goalChance) {
                         // GOAL!
                         if (isPoopTeam) homeScore++;
                         else awayScore++;
+                        excitement = Math.min(100, excitement + 14);
 
                         updateCommentary('goal');
                         showEvent('GOAL!');
@@ -1464,11 +1530,13 @@
                             goalOverlay.classList.remove('active');
                             updateBallPosition(50, 50);
                         }, 2000);
-                    } else if (outcome > 0.35) {
+                    } else if (outcome < goalChance + saveChance) {
                         updateCommentary('save');
                         addEvent('SV', 'save', `Save by ${isPoopTeam ? 'TP' : 'Poop'} keeper`);
+                        excitement = Math.min(100, excitement + 4);
                     } else {
                         updateCommentary('miss');
+                        excitement = Math.max(12, excitement - 2);
                     }
                     updateDisplay();
                 }, 800);
@@ -1479,16 +1547,22 @@
                 else homeFouls++;
                 updateCommentary('foul');
                 addEvent('F', 'foul', `Foul by ${isPoopTeam ? 'Team TP' : 'Team Poop'}`);
+                excitement = Math.min(100, excitement + 2);
                 updateDisplay();
 
             } else if (action > 0.6) {
                 if (Math.random() > 0.7) {
                     updateCommentary('possession');
                 }
+                excitement = Math.max(10, excitement - 0.5);
             }
         }
 
         function startMatch() {
+            if (matchEnded) {
+                resetMatch();
+            }
+
             if (matchRunning) {
                 matchRunning = false;
                 cancelAnimationFrame(gameLoopId);
@@ -1511,15 +1585,16 @@
 
         function endMatch() {
             matchRunning = false;
+            matchEnded = true;
             cancelAnimationFrame(gameLoopId);
             clearInterval(simInterval);
             updateCommentary('fulltime');
             addEvent('FT', '', 'Full time');
             playBtn.textContent = 'New Match';
-            playBtn.onclick = resetMatch;
         }
 
         function resetMatch() {
+            matchEnded = false;
             homeScore = 0;
             awayScore = 0;
             homeShots = 0;
@@ -1527,9 +1602,12 @@
             homeFouls = 0;
             awayFouls = 0;
             possession = 50;
+            excitement = 25;
             matchMinutes = 0;
             matchSeconds = 0;
             ballHolder = null;
+            cheerCombo = 1;
+            cheerComboEl.textContent = 'Cheer Combo: x1';
 
             // Reset positions
             Object.keys(playerPositions).forEach(id => {
@@ -1545,7 +1623,6 @@
             eventsLog.innerHTML = '<div class="event-item"><span class="event-time">00\'</span><span class="event-icon" style="background: #4caf50;">K</span><span class="event-desc">Kick-off!</span></div>';
             commentary.textContent = 'Ready for kick-off!';
             playBtn.textContent = 'Start Match';
-            playBtn.onclick = startMatch;
             updateDisplay();
         }
 
@@ -1627,12 +1704,19 @@
 
         // Cheer loud (morale boost)
         document.getElementById('boostMorale').addEventListener('click', () => {
-            teamSpirit = Math.min(100, teamSpirit + 10);
+            const now = Date.now();
+            cheerCombo = now - lastCheerAt < 1400 ? Math.min(6, cheerCombo + 1) : 1;
+            lastCheerAt = now;
+            cheerComboEl.textContent = `Cheer Combo: x${cheerCombo}`;
+
+            let gain = 7 + cheerCombo * 2;
+            if (homeScore + 1 < awayScore) gain += 4;
+            teamSpirit = Math.min(100, teamSpirit + gain);
             updateSpirit();
 
             // Visual effects
             createConfetti(30);
-            createCheerText('GO POOP!', '#8d6e63');
+            createCheerText(`GO POOP x${cheerCombo}!`, '#8d6e63');
 
             // Fan wave
             document.querySelectorAll('.fan.poop-fan').forEach((fan, i) => {
@@ -1641,12 +1725,13 @@
                 fan.style.animation = 'fan-wave 0.1s ease-in-out 10';
             });
 
-            showEvent('TEAM SPIRIT +10!');
+            showEvent(`TEAM SPIRIT +${gain}!`);
             addEvent('C', 'goal', 'Crowd cheers for Team Poop!');
+            excitement = Math.min(100, excitement + 5);
 
             // Spirit bonus effect on possession
             if (matchRunning) {
-                possession = Math.min(70, possession + 3);
+                possession = Math.min(74, possession + 2 + cheerCombo * 0.6);
                 updateDisplay();
             }
         });
@@ -1747,6 +1832,9 @@
             // Big spirit boost
             teamSpirit = Math.min(100, teamSpirit + 20);
             updateSpirit();
+            excitement = Math.min(100, excitement + 10);
+            cheerCombo = Math.min(6, cheerCombo + 2);
+            cheerComboEl.textContent = `Cheer Combo: x${cheerCombo}`;
 
             showEvent('SUPER CHEER!');
             if (matchRunning) {
