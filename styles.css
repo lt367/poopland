@@ -203,6 +203,8 @@ body {
     position: relative;
     width: 700px;
     max-width: 95vw;
+    transform-origin: center bottom;
+    transition: transform 0.2s ease;
 }
 
 /* Poop Top Swirls */
@@ -245,7 +247,7 @@ body {
 .poop-face {
     position: relative;
     background: linear-gradient(145deg, #8B6914 0%, #6B4423 50%, #4A2F17 100%);
-    height: 100px;
+    height: 112px;
     width: 350px;
     margin: -20px auto 0;
     border-radius: 50% 50% 40% 40%;
@@ -255,6 +257,89 @@ body {
     gap: 60px;
     z-index: 4;
     box-shadow: inset -5px -5px 15px rgba(0,0,0,0.3), inset 5px 5px 15px rgba(255,255,255,0.1);
+    cursor: pointer;
+}
+
+.poop-status {
+    position: absolute;
+    top: -46px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fff7d2;
+    color: #6b3f1f;
+    border: 2px solid #f0c96d;
+    border-radius: 16px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    white-space: nowrap;
+    box-shadow: 0 7px 18px rgba(80, 54, 18, 0.18);
+}
+
+.poop-status::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -8px;
+    transform: translateX(-50%);
+    border-width: 8px 7px 0 7px;
+    border-style: solid;
+    border-color: #f0c96d transparent transparent transparent;
+}
+
+.brow {
+    position: absolute;
+    width: 28px;
+    height: 7px;
+    background: #3d2614;
+    border-radius: 999px;
+    top: 26px;
+}
+
+.left-brow {
+    left: 104px;
+    transform: rotate(-12deg);
+}
+
+.right-brow {
+    right: 104px;
+    transform: rotate(12deg);
+}
+
+.blush {
+    position: absolute;
+    width: 22px;
+    height: 12px;
+    background: rgba(255, 130, 148, 0.5);
+    border-radius: 999px;
+    top: 66px;
+}
+
+.left-blush {
+    left: 78px;
+}
+
+.right-blush {
+    right: 78px;
+}
+
+.tear {
+    position: absolute;
+    width: 10px;
+    height: 14px;
+    background: linear-gradient(180deg, #8de7ff, #3bc0ea);
+    border-radius: 70% 70% 70% 70%;
+    top: 70px;
+    opacity: 0;
+    transform: translateY(-2px) scale(0.7);
+}
+
+.left-tear {
+    left: 118px;
+}
+
+.right-tear {
+    right: 118px;
 }
 
 .eye {
@@ -297,12 +382,13 @@ body {
 
 .mouth {
     position: absolute;
-    bottom: 15px;
-    width: 50px;
-    height: 25px;
+    bottom: 13px;
+    width: 58px;
+    height: 30px;
     background: #2a1810;
     border-radius: 0 0 50px 50px;
     border-top: 3px solid #1a0f0a;
+    transition: all 0.15s ease;
 }
 
 /* Poop Body */
@@ -315,6 +401,109 @@ body {
         inset -10px -10px 30px rgba(0,0,0,0.3),
         inset 10px 10px 30px rgba(255,255,255,0.1),
         0 20px 40px rgba(0,0,0,0.3);
+    cursor: pointer;
+}
+
+.tickle-meter-wrap {
+    width: min(380px, 88vw);
+    margin: 14px auto 0;
+    text-align: center;
+}
+
+.tickle-meter-label {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: #6b3f1f;
+    margin-bottom: 5px;
+}
+
+.tickle-meter {
+    width: 100%;
+    height: 14px;
+    background: rgba(255, 255, 255, 0.55);
+    border-radius: 999px;
+    border: 2px solid #8b572a;
+    overflow: hidden;
+}
+
+.tickle-meter-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #37c98b, #ffd447 45%, #ff6f91 100%);
+    transition: width 0.15s ease;
+}
+
+.tickle-pop {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    font-size: 1.2rem;
+    animation: tickle-pop 0.8s ease-out forwards;
+}
+
+@keyframes tickle-pop {
+    0% { opacity: 1; transform: translateY(0) scale(0.8); }
+    100% { opacity: 0; transform: translateY(-36px) scale(1.2); }
+}
+
+.giant-poop.mood-happy .mouth {
+    width: 56px;
+    height: 26px;
+}
+
+.giant-poop.mood-laugh .mouth {
+    width: 74px;
+    height: 36px;
+    border-radius: 0 0 45px 45px;
+}
+
+.giant-poop.mood-laugh {
+    animation: giggle 0.22s ease-in-out infinite;
+}
+
+.giant-poop.mood-laugh .blush {
+    background: rgba(255, 130, 148, 0.75);
+}
+
+.giant-poop.mood-cry {
+    animation: sob 0.18s ease-in-out infinite;
+}
+
+.giant-poop.mood-cry .mouth {
+    width: 52px;
+    height: 20px;
+    border-radius: 45px 45px 8px 8px;
+}
+
+.giant-poop.mood-cry .tear {
+    opacity: 1;
+    animation: teardrop 0.5s ease-in-out infinite;
+}
+
+.giant-poop.mood-cry .left-brow {
+    transform: rotate(15deg);
+}
+
+.giant-poop.mood-cry .right-brow {
+    transform: rotate(-15deg);
+}
+
+@keyframes giggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-1.8deg); }
+    75% { transform: rotate(1.8deg); }
+}
+
+@keyframes sob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(2px); }
+}
+
+@keyframes teardrop {
+    0% { transform: translateY(-2px) scale(0.8); }
+    60% { transform: translateY(8px) scale(1); }
+    100% { transform: translateY(12px) scale(0.75); }
 }
 
 /* Doors Container */
@@ -546,13 +735,59 @@ body {
 
     .poop-face {
         width: 250px;
-        height: 70px;
+        height: 82px;
         gap: 40px;
     }
 
     .eye {
         width: 25px;
         height: 35px;
+    }
+
+    .poop-status {
+        top: -40px;
+        font-size: 0.72rem;
+        padding: 5px 9px;
+    }
+
+    .brow {
+        width: 22px;
+        top: 20px;
+    }
+
+    .left-brow {
+        left: 73px;
+    }
+
+    .right-brow {
+        right: 73px;
+    }
+
+    .blush {
+        width: 16px;
+        top: 49px;
+    }
+
+    .left-blush {
+        left: 54px;
+    }
+
+    .right-blush {
+        right: 54px;
+    }
+
+    .left-tear {
+        left: 82px;
+    }
+
+    .right-tear {
+        right: 82px;
+    }
+
+    .mouth {
+        width: 42px;
+        height: 18px;
+        bottom: 9px;
     }
 
     .poop-body {

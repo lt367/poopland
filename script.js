@@ -1,8 +1,39 @@
-// Add sparkle effects for mouse and touch users
-document.querySelectorAll('.door').forEach(door => {
-    door.addEventListener('mouseenter', () => createSparkles(door));
-    door.addEventListener('touchstart', () => createSparkles(door), { passive: true });
-});
+const giantPoop = document.querySelector('.giant-poop');
+const poopStatus = document.getElementById('poopStatus');
+const tickleMeterFill = document.getElementById('tickleMeterFill');
+
+let tickleLevel = 0;
+let recentTickles = 0;
+let calmTimeout;
+let lastTouchAt = 0;
+
+const statusLines = {
+    calm: ['Tickle me gently!', 'Pat my head!', 'Hehe, say hi!'],
+    happy: ['Hehe!', 'That tickles!', 'Eee! So silly!'],
+    laugh: ['HAHAHA!', 'Stop, that is funny!', 'I cannot stop giggling!'],
+    cry: ['Waaaah!', 'Too much tickling!', 'My tiny poop feelings!']
+};
+
+function setMood(mood) {
+    giantPoop.classList.remove('mood-happy', 'mood-laugh', 'mood-cry');
+
+    if (mood === 'laugh') {
+        giantPoop.classList.add('mood-laugh');
+    } else if (mood === 'cry') {
+        giantPoop.classList.add('mood-cry');
+    } else {
+        giantPoop.classList.add('mood-happy');
+    }
+}
+
+function pickLine(type) {
+    const lines = statusLines[type];
+    return lines[Math.floor(Math.random() * lines.length)];
+}
+
+function updateMeter() {
+    tickleMeterFill.style.width = `${Math.max(0, Math.min(100, tickleLevel))}%`;
+}
 
 function createSparkles(element) {
     const rect = element.getBoundingClientRect();
@@ -28,7 +59,85 @@ function createSparkles(element) {
     }
 }
 
-// Add sparkle animation
+function createTicklePop(x, y, mood) {
+    const pop = document.createElement('div');
+    pop.className = 'tickle-pop';
+    pop.textContent = mood === 'cry' ? '😭' : mood === 'laugh' ? '😂' : '😆';
+    pop.style.left = `${x}px`;
+    pop.style.top = `${y}px`;
+    document.body.appendChild(pop);
+    setTimeout(() => pop.remove(), 800);
+}
+
+function evaluateMood() {
+    if (recentTickles >= 8 || tickleLevel >= 75) return 'cry';
+    if (recentTickles >= 4 || tickleLevel >= 35) return 'laugh';
+    return 'happy';
+}
+
+function resetCalmTimer() {
+    clearTimeout(calmTimeout);
+    calmTimeout = setTimeout(() => {
+        poopStatus.textContent = pickLine('calm');
+    }, 1600);
+}
+
+function handleTickle(x, y) {
+    tickleLevel = Math.min(100, tickleLevel + 14);
+    recentTickles += 1;
+    updateMeter();
+
+    setTimeout(() => {
+        recentTickles = Math.max(0, recentTickles - 1);
+    }, 1200);
+
+    const mood = evaluateMood();
+    setMood(mood);
+    poopStatus.textContent = pickLine(mood);
+
+    createTicklePop(x, y, mood);
+    resetCalmTimer();
+}
+
+// Add sparkle effects for mouse and touch users on doors
+for (const door of document.querySelectorAll('.door')) {
+    door.addEventListener('mouseenter', () => createSparkles(door));
+    door.addEventListener('touchstart', () => createSparkles(door), { passive: true });
+}
+
+// Tickle interaction for face/body only
+function onPoopInteract(event) {
+    if (event.target.closest('.door')) return;
+    if (event.type === 'click' && Date.now() - lastTouchAt < 450) return;
+
+    const isTouch = event.touches && event.touches[0];
+    if (isTouch) lastTouchAt = Date.now();
+    const x = isTouch ? event.touches[0].clientX : event.clientX;
+    const y = isTouch ? event.touches[0].clientY : event.clientY;
+    handleTickle(x, y);
+}
+
+giantPoop.addEventListener('click', onPoopInteract);
+giantPoop.addEventListener('touchstart', onPoopInteract, { passive: true });
+
+// Calm down slowly over time
+setInterval(() => {
+    if (tickleLevel <= 0) return;
+
+    tickleLevel = Math.max(0, tickleLevel - 2.2);
+    updateMeter();
+
+    if (tickleLevel < 35 && recentTickles < 4) {
+        setMood('happy');
+    }
+
+    if (tickleLevel === 0 && recentTickles === 0) {
+        setMood('happy');
+        poopStatus.textContent = pickLine('calm');
+    }
+}, 250);
+
+// Add sparkle animation once
 const style = document.createElement('style');
 style.textContent = `
     @keyframes sparkle-fly {
@@ -44,37 +153,6 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 
-// Add a fun welcome message
+setMood('happy');
+updateMeter();
 console.log('%c Welcome to Poop World! ', 'background: #8B4513; color: #FFD700; font-size: 20px; padding: 10px; border-radius: 10px;');
-
-// Make the poop wiggle when clicked
-document.querySelector('.giant-poop').addEventListener('click', (e) => {
-    if (e.target.closest('.door')) return; // Don't wiggle when clicking doors
-
-    const poop = document.querySelector('.giant-poop');
-    poop.style.animation = 'wiggle 0.5s ease-in-out';
-
-    setTimeout(() => {
-        poop.style.animation = '';
-    }, 500);
-});
-
-document.querySelector('.giant-poop').addEventListener('touchstart', (e) => {
-    if (e.target.closest('.door')) return;
-    const poop = document.querySelector('.giant-poop');
-    poop.style.animation = 'wiggle 0.5s ease-in-out';
-    setTimeout(() => {
-        poop.style.animation = '';
-    }, 500);
-}, { passive: true });
-
-// Add wiggle animation
-const wiggleStyle = document.createElement('style');
-wiggleStyle.textContent = `
-    @keyframes wiggle {
-        0%, 100% { transform: rotate(0deg); }
-        25% { transform: rotate(-5deg); }
-        75% { transform: rotate(5deg); }
-    }
-`;
-document.head.appendChild(wiggleStyle);
