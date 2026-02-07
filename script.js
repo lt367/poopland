@@ -1,8 +1,7 @@
-// Add sparkle effects when hovering doors
+// Add sparkle effects for mouse and touch users
 document.querySelectorAll('.door').forEach(door => {
-    door.addEventListener('mouseenter', () => {
-        createSparkles(door);
-    });
+    door.addEventListener('mouseenter', () => createSparkles(door));
+    door.addEventListener('touchstart', () => createSparkles(door), { passive: true });
 });
 
 function createSparkles(element) {
@@ -59,6 +58,15 @@ document.querySelector('.giant-poop').addEventListener('click', (e) => {
         poop.style.animation = '';
     }, 500);
 });
+
+document.querySelector('.giant-poop').addEventListener('touchstart', (e) => {
+    if (e.target.closest('.door')) return;
+    const poop = document.querySelector('.giant-poop');
+    poop.style.animation = 'wiggle 0.5s ease-in-out';
+    setTimeout(() => {
+        poop.style.animation = '';
+    }, 500);
+}, { passive: true });
 
 // Add wiggle animation
 const wiggleStyle = document.createElement('style');

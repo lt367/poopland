@@ -1,7 +1,20 @@
-/* Shared Page Styles - Kid & Mobile Friendly */
+:root {
+    --kid-bg: linear-gradient(180deg, #bde7ff 0%, #e8f7ff 38%, #fff7d9 100%);
+    --kid-panel: rgba(255, 255, 255, 0.95);
+    --kid-panel-border: #f3d58b;
+    --kid-brown: #6b3f1f;
+    --kid-brown-2: #8b572a;
+    --kid-gold: #ffd447;
+    --kid-pink: #ff7ea8;
+    --kid-green: #37c98b;
+    --kid-shadow: 0 14px 40px rgba(49, 74, 91, 0.18);
+}
+
 .page-body {
     min-height: 100vh;
-    padding-bottom: 80px;
+    margin: 0;
+    padding-bottom: 90px;
+    background: var(--kid-bg);
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -11,80 +24,81 @@
 
 .back-button {
     position: fixed;
-    top: 15px;
-    left: 15px;
-    background: linear-gradient(145deg, #8B6914 0%, #6B4423 100%);
-    color: #FFD700;
-    padding: 14px 28px;
-    border-radius: 30px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.1rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    z-index: 100;
-    min-height: 48px;
-    display: flex;
+    top: 12px;
+    left: 12px;
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    min-width: 48px;
+    padding: 13px 22px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1rem;
+    color: #fff;
+    background: linear-gradient(145deg, #ff8f5a 0%, #ff6f91 50%, #8b572a 100%);
+    box-shadow: 0 8px 24px rgba(255, 111, 145, 0.35);
+    z-index: 100;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .back-button:hover,
 .back-button:active {
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    transform: translateY(-1px) scale(1.03);
+    box-shadow: 0 12px 28px rgba(255, 111, 145, 0.45);
 }
 
 .page-container {
-    max-width: 800px;
+    max-width: 980px;
     margin: 0 auto;
-    padding: 80px 15px 40px;
+    padding: 84px 14px 36px;
 }
 
 .page-title {
     text-align: center;
-    font-size: 2.2rem;
-    color: #8B4513;
-    text-shadow: 2px 2px 0 #FFD700;
-    margin-bottom: 25px;
-    line-height: 1.2;
+    font-size: clamp(1.8rem, 4vw, 2.7rem);
+    line-height: 1.14;
+    color: var(--kid-brown);
+    text-shadow: 0 2px 0 #fff, 0 5px 0 rgba(255, 212, 71, 0.58);
+    margin-bottom: 24px;
 }
 
 .content-box {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 20px;
-    padding: 25px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    background: var(--kid-panel);
+    border-radius: 24px;
+    padding: 22px;
+    border: 3px solid var(--kid-panel-border);
+    box-shadow: var(--kid-shadow);
     text-align: center;
 }
 
 .content-box p {
-    font-size: 1.15rem;
-    color: #4A2F17;
-    margin: 12px 0;
-    line-height: 1.5;
+    color: #5a432a;
+    font-size: 1.08rem;
+    line-height: 1.45;
+    margin: 10px 0;
 }
 
-/* Kid-friendly button styles */
-.game-btn, .control-btn, button {
+.game-btn,
+.control-btn,
+button {
     min-height: 48px;
     min-width: 48px;
+    border-radius: 14px;
     font-size: 1rem;
-    padding: 12px 20px;
-    border-radius: 12px;
-    cursor: pointer;
+    font-family: inherit;
     touch-action: manipulation;
 }
 
-/* Touch-friendly tap areas */
 .tap-area {
     min-height: 44px;
     min-width: 44px;
 }
 
 .coming-soon {
-    font-size: 2rem !important;
-    color: #FF6B6B !important;
-    animation: pulse 1.5s ease-in-out infinite;
+    color: #ff5f7e !important;
+    animation: pulse 1.7s ease-in-out infinite;
 }
 
 @keyframes pulse {
@@ -93,11 +107,10 @@
 }
 
 .mini-poop-icon {
-    font-size: 5rem;
+    font-size: 4.5rem;
     animation: bounce 1s ease-in-out infinite;
 }
 
-/* Queue for game page */
 .line-queue {
     display: flex;
     justify-content: center;
@@ -122,13 +135,12 @@
 
 .queue-text {
     font-style: italic;
-    color: #888 !important;
+    color: #7d6d5c !important;
 }
 
-/* River Page */
 .river {
     height: 150px;
-    background: linear-gradient(to bottom, #FFE066 0%, #FFCC00 100%);
+    background: linear-gradient(to bottom, #ffe066 0%, #ffcc00 100%);
     border-radius: 20px;
     position: relative;
     overflow: hidden;
@@ -141,12 +153,7 @@
     left: -100%;
     width: 300%;
     height: 40px;
-    background: repeating-linear-gradient(
-        90deg,
-        transparent 0px,
-        rgba(255,255,255,0.3) 50px,
-        transparent 100px
-    );
+    background: repeating-linear-gradient(90deg, transparent 0px, rgba(255,255,255,0.3) 50px, transparent 100px);
     animation: wave-move 3s linear infinite;
 }
 
@@ -179,18 +186,16 @@
 }
 
 .warning {
-    color: #FF6B6B !important;
+    color: #ff6b6b !important;
     font-style: italic;
 }
 
-/* Watch Page */
 .tv-screen {
-    width: 100%;
-    max-width: 400px;
+    width: min(100%, 420px);
     height: 200px;
     background: #333;
     border: 10px solid #222;
-    border-radius: 10px;
+    border-radius: 12px;
     margin: 20px auto;
     display: flex;
     justify-content: center;
@@ -201,15 +206,8 @@
 
 .static {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: repeating-linear-gradient(
-        0deg,
-        rgba(255,255,255,0.03) 0px,
-        rgba(0,0,0,0.03) 1px
-    );
+    inset: 0;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(0,0,0,0.03) 1px);
     animation: static-move 0.1s steps(3) infinite;
 }
 
@@ -221,18 +219,16 @@
 .tv-text {
     color: #888;
     z-index: 1;
-    font-size: 1rem !important;
 }
 
 .snacks {
     font-size: 3rem;
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 18px;
     margin-top: 20px;
 }
 
-/* Poop Land Page */
 .poop-land-scene {
     display: flex;
     justify-content: space-around;
@@ -243,16 +239,16 @@
 .attractions {
     display: flex;
     justify-content: center;
-    gap: 30px;
-    margin-top: 30px;
+    gap: 22px;
+    margin-top: 26px;
     flex-wrap: wrap;
 }
 
 .attraction {
-    background: #FFF8DC;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    background: #fff8dc;
+    padding: 18px;
+    border-radius: 16px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
 }
 
 .attraction span {
@@ -265,14 +261,13 @@
     font-weight: bold;
 }
 
-/* World Page */
 .world-map {
     position: relative;
-    padding: 30px;
+    padding: 22px;
 }
 
 .globe {
-    font-size: 8rem;
+    font-size: clamp(4.6rem, 13vw, 8rem);
     animation: spin-slow 20s linear infinite;
 }
 
@@ -293,13 +288,13 @@
 
 .poop-facts {
     text-align: left;
-    margin-top: 30px;
+    margin-top: 24px;
 }
 
 .poop-facts h3 {
-    color: #8B4513;
-    font-size: 1.5rem;
-    margin-bottom: 15px;
+    color: var(--kid-brown-2);
+    font-size: 1.4rem;
+    margin-bottom: 14px;
 }
 
 .poop-facts ul {
@@ -309,120 +304,90 @@
 
 .poop-facts li {
     padding: 10px 0;
-    border-bottom: 1px dashed #DEB887;
-    font-size: 1.1rem;
-    color: #4A2F17;
+    border-bottom: 1px dashed #deb887;
+    font-size: 1.03rem;
+    color: #4a2f17;
 }
 
 .poop-facts li::before {
     content: '💩 ';
 }
 
-/* News Page */
 .newspaper {
     text-align: left;
 }
 
 .news-item {
-    background: #FFF8DC;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    border-left: 5px solid #8B4513;
+    background: #fff8dc;
+    padding: 18px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    border-left: 5px solid #8b4513;
 }
 
 .news-item h3 {
-    color: #8B4513;
-    font-size: 1.3rem;
+    color: var(--kid-brown-2);
+    font-size: 1.2rem;
     margin-bottom: 10px;
 }
 
 .news-item p {
     font-size: 1rem !important;
     text-align: left;
-    color: #666 !important;
+    color: #5f5f5f !important;
 }
 
 .news-date {
     display: block;
     text-align: right;
     color: #999;
-    font-size: 0.9rem;
-    margin-top: 10px;
+    font-size: 0.88rem;
+    margin-top: 8px;
     font-style: italic;
 }
 
-/* Responsive - Tablet */
 @media (max-width: 768px) {
-    .page-title {
-        font-size: 2rem;
-    }
-
     .content-box {
-        padding: 20px;
+        padding: 18px;
     }
 
     .content-box p {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
 }
 
-/* Responsive - Mobile */
 @media (max-width: 600px) {
     .page-container {
-        padding: 70px 10px 30px;
-    }
-
-    .page-title {
-        font-size: 1.6rem;
-        margin-bottom: 20px;
+        padding: 70px 10px 24px;
     }
 
     .back-button {
-        padding: 12px 20px;
-        font-size: 1rem;
-        top: 10px;
+        top: max(8px, env(safe-area-inset-top));
         left: 10px;
+        padding: 11px 16px;
+        font-size: 0.92rem;
     }
 
     .content-box {
-        padding: 15px;
-        border-radius: 15px;
-    }
-
-    .content-box p {
-        font-size: 1rem;
+        border-radius: 18px;
+        padding: 14px;
     }
 
     .attractions {
         gap: 12px;
     }
 
-    .globe {
-        font-size: 5rem;
-    }
-
-    .news-item h3 {
-        font-size: 1.1rem;
-    }
-
-    .news-item p {
-        font-size: 0.95rem !important;
+    .snacks {
+        font-size: 2.4rem;
     }
 }
 
-/* Extra small phones */
 @media (max-width: 380px) {
     .page-title {
-        font-size: 1.4rem;
+        font-size: 1.45rem;
     }
 
     .back-button {
-        padding: 10px 16px;
-        font-size: 0.9rem;
-    }
-
-    .content-box p {
-        font-size: 0.95rem;
+        padding: 10px 14px;
     }
 }

@@ -230,15 +230,47 @@
             color: #8B4513;
         }
 
+        .mobile-float-pad {
+            display: none;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .mobile-float-btn {
+            border: none;
+            border-radius: 999px;
+            background: linear-gradient(145deg, #00c2ff, #178fff);
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 800;
+            min-height: 64px;
+            min-width: 210px;
+            padding: 0 20px;
+            box-shadow: 0 10px 18px rgba(23, 143, 255, 0.35);
+            touch-action: manipulation;
+        }
+
+        .mobile-float-btn:active {
+            transform: scale(0.97);
+        }
+
         @media (max-width: 768px) {
             .mobile-jump-hint {
                 display: block;
+            }
+
+            .mobile-float-pad {
+                display: flex;
             }
         }
 
         @media (hover: none) and (pointer: coarse) {
             .mobile-jump-hint {
                 display: block;
+            }
+
+            .mobile-float-pad {
+                display: flex;
             }
         }
 
@@ -574,6 +606,10 @@
                 TAP THE GAME AREA TO FLOAT UP!
             </div>
 
+            <div class="mobile-float-pad">
+                <button class="mobile-float-btn" id="floatBtn">Hold to Float ⬆️</button>
+            </div>
+
             <div class="game-controls">
                 <button class="game-btn start-btn" id="startBtn">Start Game</button>
             </div>
@@ -611,6 +647,7 @@
         const newRecordEl = document.getElementById('newRecord');
         const startMessage = document.getElementById('startMessage');
         const startBtn = document.getElementById('startBtn');
+        const floatBtn = document.getElementById('floatBtn');
 
         // Game state
         let gameRunning = false;
@@ -705,6 +742,33 @@
         });
 
         gameContainer.addEventListener('touchend', () => {
+            isPressingUp = false;
+        });
+
+        floatBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            isPressingUp = true;
+            if (!gameRunning) {
+                if (gameOverScreen.classList.contains('active')) {
+                    resetGame();
+                }
+                startGame();
+            }
+        }, { passive: false });
+
+        floatBtn.addEventListener('touchend', () => {
+            isPressingUp = false;
+        });
+
+        floatBtn.addEventListener('mousedown', () => {
+            isPressingUp = true;
+        });
+
+        floatBtn.addEventListener('mouseup', () => {
+            isPressingUp = false;
+        });
+
+        floatBtn.addEventListener('mouseleave', () => {
             isPressingUp = false;
         });
 

@@ -551,6 +551,14 @@
             flex-wrap: wrap;
         }
 
+        .control-tip {
+            margin-top: 10px;
+            color: #ffd700;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
         .control-btn {
             padding: 14px 22px;
             font-size: 1rem;
@@ -615,6 +623,16 @@
 
             .stats-panel {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .controls {
+                position: sticky;
+                bottom: 8px;
+                z-index: 90;
+                background: rgba(20, 20, 35, 0.9);
+                border: 2px solid #333;
+                border-radius: 14px;
+                padding: 8px;
             }
         }
 
@@ -1183,6 +1201,7 @@
                 </div>
 
                 <!-- Controls -->
+                <div class="control-tip">Tip: Tap the field to cheer for Team Poop!</div>
                 <div class="controls">
                     <button class="control-btn play-btn" id="playBtn">Start Match</button>
                     <button class="control-btn cheer-btn" id="cheerBtn">Super Cheer!</button>
@@ -1252,6 +1271,7 @@
         const excitementValueEl = document.getElementById('excitementValue');
         const excitementBarEl = document.getElementById('excitementBar');
         const cheerComboEl = document.getElementById('cheerCombo');
+        let lastFieldCheer = 0;
 
         // Commentary
         const commentaries = {
@@ -1841,6 +1861,21 @@
                 possession = Math.min(75, possession + 5);
                 updateDisplay();
             }
+        });
+
+        // Kid-friendly quick interaction: tapping the field gives a small cheer boost
+        field.addEventListener('click', (e) => {
+            const now = Date.now();
+            if (now - lastFieldCheer < 900) return;
+            lastFieldCheer = now;
+
+            teamSpirit = Math.min(100, teamSpirit + 3);
+            excitement = Math.min(100, excitement + 2);
+            updateSpirit();
+            updateDisplay();
+
+            createCheerText('Go Team Poop!', '#ffd700');
+            showEvent('FIELD CHEER +3');
         });
 
         // Speed control

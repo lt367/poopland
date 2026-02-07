@@ -8,7 +8,7 @@
 
 body {
     font-family: 'Nunito', Arial, Helvetica, sans-serif;
-    background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 100%);
+    background: linear-gradient(to bottom, #94d6ff 0%, #e8f7ff 52%, #fff4d0 100%);
     min-height: 100vh;
     overflow-x: hidden;
     position: relative;
@@ -116,10 +116,10 @@ body {
 /* Title */
 .title {
     text-align: center;
-    font-size: 3rem;
+    font-size: clamp(2rem, 6vw, 3rem);
     color: #8B4513;
     text-shadow: 3px 3px 0 #FFD700, -1px -1px 0 #654321;
-    padding: 20px;
+    padding: 14px 14px 8px;
     position: relative;
     z-index: 10;
     animation: bounce 2s ease-in-out infinite;
@@ -138,6 +138,64 @@ body {
     padding: 20px;
     position: relative;
     z-index: 5;
+}
+
+.quick-zone {
+    width: min(960px, 94vw);
+    margin: 0 auto 12px;
+    position: relative;
+    z-index: 8;
+    background: rgba(255, 255, 255, 0.8);
+    border: 3px solid #ffd447;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(34, 75, 95, 0.16);
+    padding: 12px;
+}
+
+.quick-zone-title {
+    text-align: center;
+    color: #6b3f1f;
+    font-size: 1rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.quick-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.quick-card {
+    text-decoration: none;
+    color: #fff;
+    border-radius: 14px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-weight: 800;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.quick-card:hover,
+.quick-card:active {
+    transform: translateY(-1px) scale(1.02);
+    filter: brightness(1.06);
+}
+
+.quick-card-games { background: linear-gradient(145deg, #ff7ea8, #ff5f7e); }
+.quick-card-river { background: linear-gradient(145deg, #00c2ff, #178fff); }
+.quick-card-watch { background: linear-gradient(145deg, #4ccb92, #1c9f63); }
+
+.quick-emoji {
+    font-size: 1.35rem;
+}
+
+.quick-text {
+    font-size: 0.95rem;
 }
 
 /* Giant Poop */
@@ -420,6 +478,14 @@ body {
 
 /* Responsive - Tablet */
 @media (max-width: 768px) {
+    .quick-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-zone {
+        width: 95vw;
+    }
+
     .title {
         font-size: 2.2rem;
         padding: 15px 10px;
@@ -446,6 +512,14 @@ body {
 
 /* Responsive - Mobile */
 @media (max-width: 600px) {
+    .quick-card {
+        min-height: 54px;
+    }
+
+    .quick-text {
+        font-size: 0.88rem;
+    }
+
     .title {
         font-size: 1.8rem;
         padding: 10px;
