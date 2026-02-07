@@ -648,6 +648,122 @@
             transform: scale(0.95);
         }
 
+        /* Poop Math Styles */
+        .quiz-box {
+            background: #FFF8DC;
+            border: 3px solid #FFD700;
+            border-radius: 15px;
+            padding: 18px;
+            text-align: center;
+            margin: 20px auto;
+            max-width: 520px;
+        }
+
+        .quiz-question {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #8B4513;
+            margin-bottom: 14px;
+        }
+
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .quiz-option {
+            border: 2px solid #8B4513;
+            border-radius: 12px;
+            background: white;
+            color: #8B4513;
+            font-size: 1.25rem;
+            font-weight: 700;
+            padding: 14px 10px;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        .quiz-option.correct {
+            background: #90EE90;
+            border-color: #2E8B57;
+        }
+
+        .quiz-option.wrong {
+            background: #FFB3B3;
+            border-color: #C0392B;
+        }
+
+        .quiz-status {
+            margin-top: 12px;
+            min-height: 28px;
+            font-weight: 700;
+            color: #8B4513;
+        }
+
+        @media (max-width: 600px) {
+            .quiz-question {
+                font-size: 1.7rem;
+            }
+
+            .quiz-option {
+                font-size: 1.1rem;
+                padding: 12px 6px;
+            }
+        }
+
+        /* Spot The Golden Poop Styles */
+        .spot-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 350px;
+            margin: 20px auto;
+        }
+
+        .spot-tile {
+            aspect-ratio: 1;
+            border: 3px solid #8B4513;
+            border-radius: 14px;
+            background: linear-gradient(145deg, #FFF8DC, #FFE9A8);
+            font-size: 2.8rem;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .spot-tile:hover,
+        .spot-tile:active {
+            transform: scale(1.04);
+            box-shadow: 0 8px 14px rgba(0,0,0,0.15);
+        }
+
+        .spot-tile.hidden {
+            color: transparent;
+            text-shadow: 0 0 0 #8B4513;
+        }
+
+        .spot-tile.golden {
+            filter: drop-shadow(0 0 6px gold);
+        }
+
+        .spot-status {
+            text-align: center;
+            min-height: 28px;
+            font-weight: 700;
+            color: #8B4513;
+        }
+
+        @media (max-width: 600px) {
+            .spot-grid {
+                max-width: 290px;
+            }
+
+            .spot-tile {
+                font-size: 2.3rem;
+            }
+        }
+
         @media (max-width: 768px) {
             .snake-controls {
                 display: flex;
@@ -715,6 +831,16 @@
                     <div class="game-card-icon">🐍</div>
                     <div class="game-card-title">Poop Snake</div>
                     <div class="game-card-desc">Classic snake, but poopy!</div>
+                </div>
+                <div class="game-card" data-game="quiz">
+                    <div class="game-card-icon">🧮</div>
+                    <div class="game-card-title">Poop Math</div>
+                    <div class="game-card-desc">Solve quick math for points!</div>
+                </div>
+                <div class="game-card" data-game="spot">
+                    <div class="game-card-icon">✨</div>
+                    <div class="game-card-title">Spot Golden Poop</div>
+                    <div class="game-card-desc">Find the golden poop fast!</div>
                 </div>
             </div>
 
@@ -919,6 +1045,82 @@
                         <li>Use arrow buttons or swipe to move</li>
                         <li>Eat the poop to grow longer</li>
                         <li>Don't hit the walls or yourself!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Poop Math Game -->
+            <div class="game-area" id="quiz-game">
+                <div class="score-board">
+                    <div class="score-item">
+                        <div class="score-label">Score</div>
+                        <div class="score-value" id="quiz-score">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Time</div>
+                        <div class="score-value" id="quiz-time">45</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">High Score</div>
+                        <div class="score-value" id="quiz-highScore">0</div>
+                    </div>
+                </div>
+
+                <div class="quiz-box">
+                    <div class="quiz-question" id="quizQuestion">Press Start!</div>
+                    <div class="quiz-options">
+                        <button class="quiz-option" id="quizOption1">?</button>
+                        <button class="quiz-option" id="quizOption2">?</button>
+                        <button class="quiz-option" id="quizOption3">?</button>
+                    </div>
+                    <div class="quiz-status" id="quizStatus"></div>
+                </div>
+
+                <div class="game-controls">
+                    <button class="game-btn start-btn" id="quizStartBtn">Start Game</button>
+                </div>
+
+                <div class="instructions">
+                    <h3>How to Play:</h3>
+                    <ul>
+                        <li>Pick the right answer before time runs out</li>
+                        <li>Each right answer gives you 10 points</li>
+                        <li>Try to beat your high score in 45 seconds!</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Spot The Golden Poop Game -->
+            <div class="game-area" id="spot-game">
+                <div class="score-board">
+                    <div class="score-item">
+                        <div class="score-label">Score</div>
+                        <div class="score-value" id="spot-score">0</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">Time</div>
+                        <div class="score-value" id="spot-time">30</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-label">High Score</div>
+                        <div class="score-value" id="spot-highScore">0</div>
+                    </div>
+                </div>
+
+                <div class="spot-grid" id="spotGrid"></div>
+                <div class="spot-status" id="spotStatus">Press Start to play!</div>
+
+                <div class="game-controls">
+                    <button class="game-btn start-btn" id="spotStartBtn">Start Game</button>
+                </div>
+
+                <div class="instructions">
+                    <h3>How to Play:</h3>
+                    <ul>
+                        <li>Tap the golden poop tile as fast as you can</li>
+                        <li>Golden poop = +10 points</li>
+                        <li>Wrong tile = -5 points</li>
+                        <li>The golden poop shows for a short moment each round</li>
                     </ul>
                 </div>
             </div>
@@ -1728,6 +1930,216 @@
 
         snakeStartBtn.addEventListener('click', startSnakeGame);
         drawSnakeGame();
+
+        // ==================== POOP MATH GAME ====================
+        const quizScoreEl = document.getElementById('quiz-score');
+        const quizTimeEl = document.getElementById('quiz-time');
+        const quizHighScoreEl = document.getElementById('quiz-highScore');
+        const quizQuestionEl = document.getElementById('quizQuestion');
+        const quizStatusEl = document.getElementById('quizStatus');
+        const quizStartBtn = document.getElementById('quizStartBtn');
+        const quizOptions = [
+            document.getElementById('quizOption1'),
+            document.getElementById('quizOption2'),
+            document.getElementById('quizOption3')
+        ];
+
+        let quizScore = 0;
+        let quizTime = 45;
+        let quizAnswer = 0;
+        let quizHighScore = localStorage.getItem('quizHighScore') || 0;
+        let quizRunning = false;
+        let quizTimer;
+
+        quizHighScoreEl.textContent = quizHighScore;
+
+        function generateQuizQuestion() {
+            const a = Math.floor(Math.random() * 10) + 1;
+            const b = Math.floor(Math.random() * 10) + 1;
+            const useAdd = Math.random() > 0.35;
+            quizAnswer = useAdd ? a + b : a - b;
+            quizQuestionEl.textContent = useAdd ? `${a} + ${b} = ?` : `${a} - ${b} = ?`;
+
+            const choices = [quizAnswer];
+            while (choices.length < 3) {
+                const wrong = quizAnswer + (Math.floor(Math.random() * 9) - 4 || 2);
+                if (!choices.includes(wrong)) choices.push(wrong);
+            }
+            choices.sort(() => Math.random() - 0.5);
+
+            quizOptions.forEach((btn, idx) => {
+                btn.textContent = choices[idx];
+                btn.disabled = !quizRunning;
+                btn.classList.remove('correct', 'wrong');
+            });
+        }
+
+        function handleQuizAnswer(btn) {
+            if (!quizRunning) return;
+            const value = parseInt(btn.textContent);
+            quizOptions.forEach(option => option.classList.remove('correct', 'wrong'));
+
+            if (value === quizAnswer) {
+                quizScore += 10;
+                quizStatusEl.textContent = 'Nice! +10';
+                btn.classList.add('correct');
+            } else {
+                quizScore = Math.max(0, quizScore - 5);
+                quizStatusEl.textContent = `Oops! Correct answer: ${quizAnswer}`;
+                btn.classList.add('wrong');
+            }
+
+            quizScoreEl.textContent = quizScore;
+            setTimeout(generateQuizQuestion, 350);
+        }
+
+        function startQuizGame() {
+            if (quizRunning) return;
+            quizRunning = true;
+            quizScore = 0;
+            quizTime = 45;
+            quizScoreEl.textContent = '0';
+            quizTimeEl.textContent = '45';
+            quizStatusEl.textContent = '';
+            quizStartBtn.disabled = true;
+            quizStartBtn.textContent = 'Playing...';
+            generateQuizQuestion();
+
+            quizTimer = setInterval(() => {
+                quizTime--;
+                quizTimeEl.textContent = quizTime;
+                if (quizTime <= 0) endQuizGame();
+            }, 1000);
+        }
+
+        function endQuizGame() {
+            clearInterval(quizTimer);
+            quizRunning = false;
+            quizOptions.forEach(btn => btn.disabled = true);
+            quizQuestionEl.textContent = 'Time Up!';
+            quizStatusEl.textContent = `Final Score: ${quizScore}`;
+            quizStartBtn.disabled = false;
+            quizStartBtn.textContent = 'Play Again';
+
+            if (quizScore > quizHighScore) {
+                quizHighScore = quizScore;
+                localStorage.setItem('quizHighScore', quizHighScore);
+                quizHighScoreEl.textContent = quizHighScore;
+            }
+        }
+
+        quizOptions.forEach(btn => btn.addEventListener('click', () => handleQuizAnswer(btn)));
+        quizStartBtn.addEventListener('click', startQuizGame);
+
+        // ==================== SPOT THE GOLDEN POOP ====================
+        const spotGrid = document.getElementById('spotGrid');
+        const spotScoreEl = document.getElementById('spot-score');
+        const spotTimeEl = document.getElementById('spot-time');
+        const spotHighScoreEl = document.getElementById('spot-highScore');
+        const spotStatusEl = document.getElementById('spotStatus');
+        const spotStartBtn = document.getElementById('spotStartBtn');
+
+        let spotScore = 0;
+        let spotTime = 30;
+        let spotHighScore = localStorage.getItem('spotHighScore') || 0;
+        let spotRunning = false;
+        let spotActiveIndex = -1;
+        let spotRoundTimeout;
+        let spotTimer;
+
+        spotHighScoreEl.textContent = spotHighScore;
+
+        for (let i = 0; i < 9; i++) {
+            const tile = document.createElement('button');
+            tile.className = 'spot-tile hidden';
+            tile.textContent = '💩';
+            tile.dataset.index = i;
+            tile.addEventListener('click', () => tapSpotTile(i));
+            spotGrid.appendChild(tile);
+        }
+
+        function showSpotRound() {
+            if (!spotRunning) return;
+            const tiles = spotGrid.querySelectorAll('.spot-tile');
+            tiles.forEach(tile => {
+                tile.classList.add('hidden');
+                tile.classList.remove('golden');
+                tile.textContent = '💩';
+            });
+
+            spotActiveIndex = Math.floor(Math.random() * tiles.length);
+            const activeTile = tiles[spotActiveIndex];
+            activeTile.textContent = '✨💩';
+            activeTile.classList.remove('hidden');
+            activeTile.classList.add('golden');
+
+            const revealMs = Math.max(350, 900 - (Math.floor((30 - spotTime) / 6) * 100));
+            spotRoundTimeout = setTimeout(() => {
+                activeTile.classList.add('hidden');
+            }, revealMs);
+        }
+
+        function tapSpotTile(index) {
+            if (!spotRunning) return;
+            const tiles = spotGrid.querySelectorAll('.spot-tile');
+            clearTimeout(spotRoundTimeout);
+
+            if (index === spotActiveIndex) {
+                spotScore += 10;
+                spotStatusEl.textContent = 'Great eyes! +10';
+                tiles[index].classList.remove('hidden');
+            } else {
+                spotScore = Math.max(0, spotScore - 5);
+                spotStatusEl.textContent = 'Miss! -5';
+                if (tiles[spotActiveIndex]) tiles[spotActiveIndex].classList.remove('hidden');
+            }
+
+            spotScoreEl.textContent = spotScore;
+            setTimeout(showSpotRound, 280);
+        }
+
+        function startSpotGame() {
+            if (spotRunning) return;
+            spotRunning = true;
+            spotScore = 0;
+            spotTime = 30;
+            spotScoreEl.textContent = '0';
+            spotTimeEl.textContent = '30';
+            spotStatusEl.textContent = 'Find it!';
+            spotStartBtn.disabled = true;
+            spotStartBtn.textContent = 'Playing...';
+            showSpotRound();
+
+            spotTimer = setInterval(() => {
+                spotTime--;
+                spotTimeEl.textContent = spotTime;
+                if (spotTime <= 0) endSpotGame();
+            }, 1000);
+        }
+
+        function endSpotGame() {
+            clearInterval(spotTimer);
+            clearTimeout(spotRoundTimeout);
+            spotRunning = false;
+            spotActiveIndex = -1;
+            spotStartBtn.disabled = false;
+            spotStartBtn.textContent = 'Play Again';
+            spotStatusEl.textContent = `Final Score: ${spotScore}`;
+
+            spotGrid.querySelectorAll('.spot-tile').forEach(tile => {
+                tile.classList.add('hidden');
+                tile.classList.remove('golden');
+                tile.textContent = '💩';
+            });
+
+            if (spotScore > spotHighScore) {
+                spotHighScore = spotScore;
+                localStorage.setItem('spotHighScore', spotHighScore);
+                spotHighScoreEl.textContent = spotHighScore;
+            }
+        }
+
+        spotStartBtn.addEventListener('click', startSpotGame);
     </script>
 </body>
 </html>
