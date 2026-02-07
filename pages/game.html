@@ -20,12 +20,15 @@
             padding: 20px;
             text-align: center;
             cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
+            transition: transform 0.2s, box-shadow 0.2s;
             border: 3px solid transparent;
+            min-height: 120px;
+            touch-action: manipulation;
         }
 
-        .game-card:hover {
-            transform: translateY(-5px);
+        .game-card:hover,
+        .game-card:active {
+            transform: translateY(-3px);
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
 
@@ -35,20 +38,63 @@
         }
 
         .game-card-icon {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 10px;
         }
 
         .game-card-title {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
             color: #8B4513;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
         }
 
         .game-card-desc {
-            font-size: 0.8rem;
-            color: #888;
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.3;
+        }
+
+        /* Mobile touch controls */
+        .mobile-controls {
+            display: none;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .mobile-btn {
+            flex: 1;
+            min-height: 70px;
+            font-size: 2.5rem;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(145deg, #8B4513, #A0522D);
+            color: white;
+            cursor: pointer;
+            touch-action: manipulation;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-controls {
+                display: flex;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .mobile-controls {
+                display: flex;
+            }
         }
 
         .game-area {
@@ -64,28 +110,29 @@
             position: relative;
             width: 100%;
             max-width: 600px;
-            height: 400px;
+            height: 350px;
             background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 60%, #90EE90 60%, #228B22 100%);
             border-radius: 20px;
             overflow: hidden;
             margin: 20px auto;
             cursor: none;
             border: 5px solid #8B4513;
+            touch-action: none;
         }
 
         .toilet {
             position: absolute;
             bottom: 10px;
-            width: 80px;
-            height: 60px;
-            transition: left 0.08s ease-out;
+            width: 90px;
+            height: 65px;
+            transition: left 0.06s ease-out;
         }
 
         .toilet-bowl {
-            width: 80px;
-            height: 50px;
+            width: 90px;
+            height: 55px;
             background: white;
-            border-radius: 0 0 40px 40px;
+            border-radius: 0 0 45px 45px;
             border: 4px solid #DDD;
             position: relative;
         }
@@ -98,17 +145,42 @@
             right: 10px;
             bottom: 10px;
             background: #E0F4FF;
-            border-radius: 0 0 30px 30px;
+            border-radius: 0 0 35px 35px;
         }
 
         .toilet-seat {
-            width: 90px;
-            height: 15px;
+            width: 100px;
+            height: 16px;
             background: white;
             border-radius: 10px 10px 0 0;
             margin-left: -5px;
             border: 3px solid #DDD;
             border-bottom: none;
+        }
+
+        @media (max-width: 600px) {
+            .game-container {
+                height: 300px;
+                border-radius: 15px;
+            }
+
+            .toilet {
+                width: 100px;
+                height: 70px;
+            }
+
+            .toilet-bowl {
+                width: 100px;
+                height: 60px;
+            }
+
+            .toilet-seat {
+                width: 110px;
+            }
+
+            .falling-poop {
+                font-size: 2.8rem;
+            }
         }
 
         .falling-poop {
@@ -152,51 +224,79 @@
         .score-board {
             display: flex;
             justify-content: space-around;
-            padding: 15px;
+            padding: 15px 10px;
             background: #FFF8DC;
             border-radius: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
 
         .score-item {
             text-align: center;
+            min-width: 70px;
         }
 
         .score-label {
-            font-size: 0.9rem;
-            color: #888;
+            font-size: 0.95rem;
+            color: #666;
+            font-weight: 500;
         }
 
         .score-value {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             font-weight: bold;
             color: #8B4513;
         }
 
         .game-controls {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             justify-content: center;
-            margin-top: 20px;
+            margin-top: 15px;
             flex-wrap: wrap;
         }
 
         .game-btn {
-            padding: 15px 30px;
-            font-size: 1.2rem;
+            padding: 16px 28px;
+            font-size: 1.15rem;
             font-family: inherit;
             border: none;
             border-radius: 30px;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
             font-weight: bold;
+            min-height: 52px;
+            touch-action: manipulation;
         }
 
-        .game-btn:hover {
+        .game-btn:hover,
+        .game-btn:active {
             transform: scale(1.05);
+        }
+
+        @media (max-width: 600px) {
+            .score-board {
+                padding: 12px 8px;
+            }
+
+            .score-label {
+                font-size: 0.85rem;
+            }
+
+            .score-value {
+                font-size: 1.4rem;
+            }
+
+            .game-btn {
+                padding: 14px 22px;
+                font-size: 1rem;
+            }
+
+            .game-controls {
+                gap: 8px;
+            }
         }
 
         .start-btn {
@@ -284,18 +384,19 @@
         .whack-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            max-width: 400px;
+            gap: 12px;
+            max-width: 350px;
             margin: 20px auto;
         }
 
         .whack-hole {
             position: relative;
-            height: 100px;
+            height: 90px;
             background: linear-gradient(to bottom, #8B4513, #654321);
             border-radius: 50%;
             overflow: hidden;
             cursor: pointer;
+            touch-action: manipulation;
         }
 
         .whack-hole::after {
@@ -304,23 +405,23 @@
             bottom: 0;
             left: 10%;
             right: 10%;
-            height: 30px;
+            height: 25px;
             background: #3d2314;
             border-radius: 50%;
         }
 
         .whack-poop {
             position: absolute;
-            bottom: -60px;
+            bottom: -55px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 3rem;
+            font-size: 2.8rem;
             transition: bottom 0.1s ease-out;
             cursor: pointer;
         }
 
         .whack-poop.up {
-            bottom: 20px;
+            bottom: 15px;
         }
 
         .whack-poop.hit {
@@ -333,26 +434,48 @@
             100% { transform: translateX(-50%) scale(0); }
         }
 
+        @media (max-width: 600px) {
+            .whack-grid {
+                max-width: 280px;
+                gap: 10px;
+            }
+
+            .whack-hole {
+                height: 75px;
+            }
+
+            .whack-poop {
+                font-size: 2.2rem;
+                bottom: -45px;
+            }
+
+            .whack-poop.up {
+                bottom: 10px;
+            }
+        }
+
         /* Memory Game Styles */
         .memory-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            max-width: 400px;
+            gap: 8px;
+            max-width: 320px;
             margin: 20px auto;
         }
 
         .memory-card {
             aspect-ratio: 1;
             background: linear-gradient(145deg, #8B4513, #A0522D);
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             transition: transform 0.3s;
             transform-style: preserve-3d;
+            touch-action: manipulation;
+            min-height: 60px;
         }
 
         .memory-card.flipped {
@@ -366,7 +489,7 @@
         }
 
         .memory-card .card-back {
-            font-size: 2rem;
+            font-size: 1.8rem;
         }
 
         .memory-card .card-front {
@@ -382,18 +505,31 @@
             transform: rotateY(180deg);
         }
 
+        @media (max-width: 600px) {
+            .memory-grid {
+                max-width: 280px;
+                gap: 6px;
+            }
+
+            .memory-card {
+                font-size: 1.8rem;
+                border-radius: 10px;
+            }
+        }
+
         /* Poop Clicker Styles */
         .clicker-area {
             text-align: center;
-            padding: 20px;
+            padding: 15px;
         }
 
         .big-poop {
-            font-size: 10rem;
+            font-size: 8rem;
             cursor: pointer;
             transition: transform 0.1s;
             display: inline-block;
             user-select: none;
+            touch-action: manipulation;
         }
 
         .big-poop:hover {
@@ -401,14 +537,14 @@
         }
 
         .big-poop:active {
-            transform: scale(0.95);
+            transform: scale(0.9);
         }
 
         .click-counter {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: #8B4513;
-            margin: 20px 0;
+            margin: 15px 0;
         }
 
         .upgrades {
@@ -416,20 +552,24 @@
             gap: 10px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         .upgrade-btn {
-            padding: 10px 20px;
+            padding: 12px 20px;
             background: #FFF8DC;
             border: 2px solid #8B4513;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
             font-family: inherit;
             transition: all 0.2s;
+            min-height: 48px;
+            font-size: 0.95rem;
+            touch-action: manipulation;
         }
 
-        .upgrade-btn:hover:not(:disabled) {
+        .upgrade-btn:hover:not(:disabled),
+        .upgrade-btn:active:not(:disabled) {
             background: #FFD700;
         }
 
@@ -451,6 +591,16 @@
             100% { opacity: 0; transform: translateY(-100px); }
         }
 
+        @media (max-width: 600px) {
+            .big-poop {
+                font-size: 6rem;
+            }
+
+            .click-counter {
+                font-size: 2rem;
+            }
+        }
+
         /* Snake Game Styles */
         .snake-canvas {
             display: block;
@@ -458,6 +608,53 @@
             border: 5px solid #8B4513;
             border-radius: 10px;
             background: #90EE90;
+            max-width: 100%;
+            touch-action: none;
+        }
+
+        /* Snake mobile controls */
+        .snake-controls {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .snake-controls-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .snake-btn {
+            width: 60px;
+            height: 60px;
+            font-size: 1.8rem;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(145deg, #8B4513, #A0522D);
+            color: white;
+            cursor: pointer;
+            touch-action: manipulation;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .snake-btn:active {
+            transform: scale(0.95);
+        }
+
+        @media (max-width: 768px) {
+            .snake-controls {
+                display: flex;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .snake-controls {
+                display: flex;
+            }
         }
 
         .instructions {
@@ -558,16 +755,21 @@
                     <button class="game-btn reset-btn" id="resetBtn">Reset</button>
                 </div>
 
+                <!-- Mobile Controls for Catch Game -->
+                <div class="mobile-controls" id="catchMobileControls">
+                    <button class="mobile-btn" id="moveLeftBtn">&#9664;</button>
+                    <button class="mobile-btn" id="moveRightBtn">&#9654;</button>
+                </div>
+
                 <div class="instructions">
                     <h3>How to Play:</h3>
                     <ul>
-                        <li>Move your mouse (or finger) to control the toilet</li>
+                        <li>Drag your finger or use the buttons below to move the toilet</li>
                         <li>Catch the falling poops before they hit the ground!</li>
                         <li>💩 Normal poop = 10 points</li>
-                        <li>✨💩 Golden poop = 50 points (more common now!)</li>
+                        <li>✨💩 Golden poop = 50 points</li>
                         <li>🌈💩 Rainbow poop = 100 points!</li>
                         <li>🧻 Toilet paper = Extra life</li>
-                        <li>Every 100 points increases the level!</li>
                     </ul>
                 </div>
             </div>
@@ -690,18 +892,29 @@
                     </div>
                 </div>
 
-                <canvas id="snakeCanvas" class="snake-canvas" width="400" height="400"></canvas>
+                <canvas id="snakeCanvas" class="snake-canvas" width="300" height="300"></canvas>
 
                 <div class="game-controls">
                     <button class="game-btn start-btn" id="snakeStartBtn">Start Game</button>
                 </div>
 
+                <!-- Snake Mobile Controls -->
+                <div class="snake-controls" id="snakeMobileControls">
+                    <div class="snake-controls-row">
+                        <button class="snake-btn" id="snakeUp">&#9650;</button>
+                    </div>
+                    <div class="snake-controls-row">
+                        <button class="snake-btn" id="snakeLeft">&#9664;</button>
+                        <button class="snake-btn" id="snakeDown">&#9660;</button>
+                        <button class="snake-btn" id="snakeRight">&#9654;</button>
+                    </div>
+                </div>
+
                 <div class="instructions">
                     <h3>How to Play:</h3>
                     <ul>
-                        <li>Use arrow keys or WASD to move</li>
-                        <li>On mobile, swipe to change direction</li>
-                        <li>Eat the 💩 to grow longer</li>
+                        <li>Use arrow buttons or swipe to move</li>
+                        <li>Eat the poop to grow longer</li>
                         <li>Don't hit the walls or yourself!</li>
                     </ul>
                 </div>
@@ -1035,6 +1248,29 @@
             if (e.key === 'ArrowLeft' || e.key === 'a') keysHeld.left = false;
             if (e.key === 'ArrowRight' || e.key === 'd') keysHeld.right = false;
         });
+
+        // Mobile button controls for Catch game
+        const moveLeftBtn = document.getElementById('moveLeftBtn');
+        const moveRightBtn = document.getElementById('moveRightBtn');
+
+        // Touch start/end for mobile buttons
+        moveLeftBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keysHeld.left = true;
+        }, { passive: false });
+        moveLeftBtn.addEventListener('touchend', () => keysHeld.left = false);
+        moveLeftBtn.addEventListener('mousedown', () => keysHeld.left = true);
+        moveLeftBtn.addEventListener('mouseup', () => keysHeld.left = false);
+        moveLeftBtn.addEventListener('mouseleave', () => keysHeld.left = false);
+
+        moveRightBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            keysHeld.right = true;
+        }, { passive: false });
+        moveRightBtn.addEventListener('touchend', () => keysHeld.right = false);
+        moveRightBtn.addEventListener('mousedown', () => keysHeld.right = true);
+        moveRightBtn.addEventListener('mouseup', () => keysHeld.right = false);
+        moveRightBtn.addEventListener('mouseleave', () => keysHeld.right = false);
 
         // Smooth physics-based movement loop
         function updateToiletMovement() {
@@ -1458,6 +1694,20 @@
                 if (dy > 0 && direction.y === 0) direction = { x: 0, y: gridSize };
                 else if (dy < 0 && direction.y === 0) direction = { x: 0, y: -gridSize };
             }
+        });
+
+        // Mobile button controls for Snake game
+        document.getElementById('snakeUp').addEventListener('click', () => {
+            if (snakeRunning && direction.y === 0) direction = { x: 0, y: -gridSize };
+        });
+        document.getElementById('snakeDown').addEventListener('click', () => {
+            if (snakeRunning && direction.y === 0) direction = { x: 0, y: gridSize };
+        });
+        document.getElementById('snakeLeft').addEventListener('click', () => {
+            if (snakeRunning && direction.x === 0) direction = { x: -gridSize, y: 0 };
+        });
+        document.getElementById('snakeRight').addEventListener('click', () => {
+            if (snakeRunning && direction.x === 0) direction = { x: gridSize, y: 0 };
         });
 
         snakeStartBtn.addEventListener('click', startSnakeGame);

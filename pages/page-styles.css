@@ -1,56 +1,84 @@
-/* Shared Page Styles */
+/* Shared Page Styles - Kid & Mobile Friendly */
 .page-body {
     min-height: 100vh;
     padding-bottom: 80px;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
 }
 
 .back-button {
     position: fixed;
-    top: 20px;
-    left: 20px;
+    top: 15px;
+    left: 15px;
     background: linear-gradient(145deg, #8B6914 0%, #6B4423 100%);
     color: #FFD700;
-    padding: 12px 24px;
+    padding: 14px 28px;
     border-radius: 30px;
     text-decoration: none;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 1.1rem;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     z-index: 100;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
 }
 
-.back-button:hover {
-    transform: scale(1.1);
+.back-button:hover,
+.back-button:active {
+    transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(0,0,0,0.4);
 }
 
 .page-container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 80px 20px 40px;
+    padding: 80px 15px 40px;
 }
 
 .page-title {
     text-align: center;
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     color: #8B4513;
     text-shadow: 2px 2px 0 #FFD700;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
+    line-height: 1.2;
 }
 
 .content-box {
     background: rgba(255, 255, 255, 0.95);
     border-radius: 20px;
-    padding: 30px;
+    padding: 25px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.2);
     text-align: center;
 }
 
 .content-box p {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     color: #4A2F17;
-    margin: 15px 0;
+    margin: 12px 0;
+    line-height: 1.5;
+}
+
+/* Kid-friendly button styles */
+.game-btn, .control-btn, button {
+    min-height: 48px;
+    min-width: 48px;
+    font-size: 1rem;
+    padding: 12px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+/* Touch-friendly tap areas */
+.tap-area {
+    min-height: 44px;
+    min-width: 44px;
 }
 
 .coming-soon {
@@ -324,22 +352,77 @@
     font-style: italic;
 }
 
-/* Responsive */
-@media (max-width: 600px) {
+/* Responsive - Tablet */
+@media (max-width: 768px) {
     .page-title {
-        font-size: 1.8rem;
+        font-size: 2rem;
+    }
+
+    .content-box {
+        padding: 20px;
+    }
+
+    .content-box p {
+        font-size: 1.1rem;
+    }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 600px) {
+    .page-container {
+        padding: 70px 10px 30px;
+    }
+
+    .page-title {
+        font-size: 1.6rem;
+        margin-bottom: 20px;
     }
 
     .back-button {
-        padding: 10px 18px;
-        font-size: 0.9rem;
+        padding: 12px 20px;
+        font-size: 1rem;
+        top: 10px;
+        left: 10px;
+    }
+
+    .content-box {
+        padding: 15px;
+        border-radius: 15px;
+    }
+
+    .content-box p {
+        font-size: 1rem;
     }
 
     .attractions {
-        gap: 15px;
+        gap: 12px;
     }
 
     .globe {
         font-size: 5rem;
+    }
+
+    .news-item h3 {
+        font-size: 1.1rem;
+    }
+
+    .news-item p {
+        font-size: 0.95rem !important;
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 380px) {
+    .page-title {
+        font-size: 1.4rem;
+    }
+
+    .back-button {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+    }
+
+    .content-box p {
+        font-size: 0.95rem;
     }
 }

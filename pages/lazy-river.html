@@ -11,12 +11,29 @@
             position: relative;
             width: 100%;
             max-width: 700px;
-            height: 450px;
+            height: 400px;
             margin: 20px auto;
             border-radius: 20px;
             overflow: hidden;
             border: 5px solid #8B4513;
             background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 30%, #FFE066 30%, #FFCC00 100%);
+            touch-action: none;
+            cursor: pointer;
+        }
+
+        @media (max-width: 600px) {
+            .game-container {
+                height: 320px;
+                border-radius: 15px;
+            }
+
+            .player {
+                font-size: 2.5rem;
+            }
+
+            .obstacle {
+                font-size: 2rem;
+            }
         }
 
         .river-layer {
@@ -153,7 +170,7 @@
         }
 
         .game-btn {
-            padding: 15px 30px;
+            padding: 18px 36px;
             font-size: 1.2rem;
             font-family: inherit;
             border: none;
@@ -161,9 +178,12 @@
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
             font-weight: bold;
+            min-height: 56px;
+            touch-action: manipulation;
         }
 
-        .game-btn:hover {
+        .game-btn:hover,
+        .game-btn:active {
             transform: scale(1.05);
         }
 
@@ -171,6 +191,31 @@
             background: linear-gradient(145deg, #55EFC4, #00B894);
             color: white;
             box-shadow: 0 5px 15px rgba(0,184,148,0.4);
+        }
+
+        /* Mobile jump button */
+        .mobile-jump-hint {
+            display: none;
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(145deg, #FFD700, #FFA500);
+            border-radius: 15px;
+            margin-top: 15px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #8B4513;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-jump-hint {
+                display: block;
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .mobile-jump-hint {
+                display: block;
+            }
         }
 
         .instructions {
@@ -184,6 +229,7 @@
         .instructions h3 {
             color: #8B4513;
             margin-bottom: 10px;
+            font-size: 1.1rem;
         }
 
         .instructions ul {
@@ -191,8 +237,10 @@
         }
 
         .instructions li {
-            margin: 5px 0;
-            color: #666;
+            margin: 8px 0;
+            color: #555;
+            font-size: 1rem;
+            line-height: 1.4;
         }
 
         .sun {
@@ -439,8 +487,8 @@
                 <div class="player" id="player">🛟</div>
 
                 <div class="start-message" id="startMessage">
-                    Press <span class="key">SPACE</span> to float up!<br>
-                    <small>or tap the screen on mobile</small>
+                    TAP or press SPACE to float up!<br>
+                    <span class="key">TAP ANYWHERE</span>
                 </div>
 
                 <div class="game-over-screen" id="gameOverScreen">
@@ -449,9 +497,13 @@
                         Distance: <span id="finalDistance">0</span>m<br>
                         Coins: <span id="finalCoins">0</span>
                     </div>
-                    <p id="newRecord" style="color: #55EFC4; display: none;">🎉 NEW RECORD! 🎉</p>
-                    <p style="margin-top: 15px;">Press SPACE to play again</p>
+                    <p id="newRecord" style="color: #55EFC4; display: none;">NEW RECORD!</p>
+                    <p style="margin-top: 15px; font-size: 1.1rem;">Tap or press SPACE to play again</p>
                 </div>
+            </div>
+
+            <div class="mobile-jump-hint">
+                TAP THE GAME AREA TO FLOAT UP!
             </div>
 
             <div class="game-controls">
@@ -461,20 +513,10 @@
             <div class="instructions">
                 <h3>How to Play:</h3>
                 <ul>
-                    <li>Press <strong>SPACEBAR</strong> (or tap screen) to float UP</li>
+                    <li>TAP the game (or press SPACE) to float UP</li>
                     <li>Release to sink down</li>
-                    <li>Dodge the poop-infected animals and trash!</li>
-                    <li>Collect coins 🪙 for bonus points</li>
-                    <li>Don't hit the top or bottom of the river!</li>
-                </ul>
-                <h3 style="margin-top: 15px;">Obstacles:</h3>
-                <ul>
-                    <li>🐊 Poopy Alligator - swims fast!</li>
-                    <li>🦈 Poop Shark - dangerous!</li>
-                    <li>🗑️ Floating Trash</li>
-                    <li>💩 Giant Poop - classic danger!</li>
-                    <li>🪵 Driftwood with poop</li>
-                    <li>🐍 Sewer Snake</li>
+                    <li>Dodge the poop-infected animals!</li>
+                    <li>Collect coins for bonus points</li>
                 </ul>
             </div>
         </div>

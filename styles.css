@@ -374,20 +374,96 @@ body {
     );
 }
 
-/* Responsive */
-@media (max-width: 600px) {
+/* Kid-friendly improvements */
+body {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Larger, clearer fonts for kids */
+.door-sign {
+    font-size: 0.85rem;
+    padding: 8px 12px;
+    max-width: 100px;
+    line-height: 1.3;
+}
+
+.door-sign .small {
+    font-size: 0.7rem;
+}
+
+/* Bigger touch targets */
+.door {
+    min-width: 80px;
+    padding: 10px;
+}
+
+.door-frame {
+    width: 80px;
+    height: 100px;
+}
+
+/* Active state for touch */
+.door:active {
+    transform: scale(0.95);
+}
+
+.door:active .door-frame {
+    box-shadow: 0 0 25px #FFD700, 0 0 50px #FFA500;
+}
+
+/* Responsive - Tablet */
+@media (max-width: 768px) {
     .title {
-        font-size: 1.8rem;
+        font-size: 2.2rem;
+        padding: 15px 10px;
     }
 
     .door-frame {
-        width: 55px;
-        height: 70px;
+        width: 70px;
+        height: 90px;
     }
 
     .door-sign {
-        font-size: 0.55rem;
-        max-width: 70px;
+        font-size: 0.75rem;
+        max-width: 85px;
+    }
+
+    .door-row {
+        gap: 12px;
+    }
+
+    .poop-body {
+        padding: 30px 20px 40px;
+    }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 600px) {
+    .title {
+        font-size: 1.8rem;
+        padding: 10px;
+    }
+
+    .door-frame {
+        width: 60px;
+        height: 80px;
+    }
+
+    .door-sign {
+        font-size: 0.7rem;
+        max-width: 75px;
+        padding: 6px 8px;
+    }
+
+    .door-sign .small {
+        font-size: 0.6rem;
+    }
+
+    .door-row {
+        gap: 8px;
     }
 
     .poop-face {
@@ -399,5 +475,51 @@ body {
     .eye {
         width: 25px;
         height: 35px;
+    }
+
+    .poop-body {
+        padding: 25px 15px 35px;
+    }
+
+    .doors-container {
+        gap: 15px;
+    }
+}
+
+/* Extra small phones */
+@media (max-width: 380px) {
+    .title {
+        font-size: 1.5rem;
+    }
+
+    .door-frame {
+        width: 50px;
+        height: 65px;
+    }
+
+    .door-sign {
+        font-size: 0.6rem;
+        max-width: 65px;
+    }
+
+    .poop-top {
+        height: 80px;
+    }
+
+    .poop-swirl-1 {
+        width: 50px;
+        height: 50px;
+    }
+
+    .poop-swirl-2 {
+        width: 90px;
+        height: 45px;
+        top: 25px;
+    }
+
+    .poop-swirl-3 {
+        width: 130px;
+        height: 40px;
+        top: 45px;
     }
 }
