@@ -7,16 +7,39 @@
     <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="page-styles.css">
     <style>
+        /* Center the entire game */
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            padding: 70px 10px 30px;
+        }
+
+        .content-box {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
         .stadium-container {
             position: relative;
             width: 100%;
-            max-width: 850px;
-            margin: 20px auto;
+            max-width: 100%;
+            margin: 0 auto;
             background: linear-gradient(to bottom, #1a1a2e 0%, #16213e 100%);
             border-radius: 20px;
-            padding: 20px;
+            padding: 15px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
             border: 4px solid #0f0f23;
+        }
+
+        @media (max-width: 600px) {
+            .stadium-container {
+                padding: 10px;
+                border-radius: 15px;
+            }
         }
 
         /* Scoreboard */
@@ -365,22 +388,22 @@
         .crowd-section {
             display: flex;
             justify-content: space-between;
-            margin-top: 15px;
-            padding: 10px;
+            margin-top: 10px;
+            padding: 8px;
             background: linear-gradient(135deg, #2d2d2d, #1a1a1a);
-            border-radius: 10px;
+            border-radius: 8px;
         }
 
         .crowd-side {
             display: flex;
-            gap: 4px;
+            gap: 3px;
             flex-wrap: wrap;
             width: 45%;
         }
 
         .fan {
-            width: 14px;
-            height: 20px;
+            width: 12px;
+            height: 16px;
             border-radius: 50% 50% 0 0;
             animation: fan-wave 1s ease-in-out infinite;
         }
@@ -393,31 +416,42 @@
 
         @keyframes fan-wave {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
+            50% { transform: translateY(-3px); }
+        }
+
+        @media (max-width: 600px) {
+            .crowd-section {
+                padding: 5px;
+            }
+
+            .fan {
+                width: 10px;
+                height: 14px;
+            }
         }
 
         /* Commentary */
         .commentary-box {
             background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
-            border-radius: 10px;
-            padding: 15px 20px;
-            margin-top: 15px;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-top: 10px;
             border: 2px solid #333;
-            min-height: 60px;
+            min-height: 50px;
         }
 
         .commentary-label {
             color: #ffd700;
-            font-size: 0.75rem;
-            margin-bottom: 8px;
+            font-size: 0.7rem;
+            margin-bottom: 5px;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
 
         .commentary-text {
             color: #fff;
-            font-size: 0.95rem;
-            line-height: 1.5;
+            font-size: 0.9rem;
+            line-height: 1.4;
             font-style: italic;
         }
 
@@ -425,8 +459,24 @@
         .stats-panel {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: 15px;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .commentary-box {
+                padding: 8px 12px;
+                min-height: 40px;
+            }
+
+            .commentary-text {
+                font-size: 0.85rem;
+            }
+
+            .stats-panel {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 5px;
+            }
         }
 
         .stat-box {
@@ -612,38 +662,38 @@
 
         /* Events log */
         .events-log {
-            max-height: 120px;
+            max-height: 80px;
             overflow-y: auto;
-            margin-top: 15px;
+            margin-top: 10px;
             background: #0a0a0a;
-            border-radius: 10px;
-            padding: 8px;
+            border-radius: 8px;
+            padding: 6px;
             border: 2px solid #222;
         }
 
         .event-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 6px 0;
+            gap: 6px;
+            padding: 4px 0;
             border-bottom: 1px solid #222;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         .event-time {
             color: #ffd700;
             font-weight: bold;
-            min-width: 35px;
+            min-width: 30px;
         }
 
         .event-icon {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: bold;
             color: #fff;
         }
@@ -654,6 +704,16 @@
         .event-icon.save { background: #ff9800; }
 
         .event-desc { color: #ccc; flex: 1; }
+
+        @media (max-width: 600px) {
+            .events-log {
+                max-height: 60px;
+            }
+
+            .event-item {
+                font-size: 0.75rem;
+            }
+        }
 
         /* Cheer Effects */
         .confetti {
@@ -756,16 +816,16 @@
         .help-section {
             background: linear-gradient(135deg, #2d1f1a, #1a1210);
             border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
+            padding: 12px;
+            margin-top: 12px;
             border: 2px solid #5d4037;
             text-align: center;
         }
 
         .help-title {
             color: #ffd700;
-            font-size: 1rem;
-            margin-bottom: 10px;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -773,21 +833,38 @@
         .boost-container {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .boost-btn {
-            padding: 12px 20px;
-            font-size: 0.85rem;
+            padding: 10px 14px;
+            font-size: 0.8rem;
             font-family: inherit;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            transition: all 0.3s;
+            transition: all 0.2s;
             position: relative;
             overflow: hidden;
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+
+        @media (max-width: 600px) {
+            .boost-btn {
+                padding: 8px 10px;
+                font-size: 0.75rem;
+            }
+
+            .help-section {
+                padding: 10px;
+            }
+
+            .help-title {
+                font-size: 0.85rem;
+            }
         }
 
         .boost-btn::after {
@@ -837,16 +914,18 @@
             box-shadow: 0 4px 15px rgba(255,215,0,0.4);
         }
 
-        .boost-btn:hover:not(:disabled) {
-            transform: translateY(-3px) scale(1.05);
+        .boost-btn:hover:not(:disabled),
+        .boost-btn:active:not(:disabled) {
+            transform: translateY(-2px) scale(1.03);
         }
 
         .boost-meter {
-            margin-top: 15px;
+            margin-top: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .meter-label {
@@ -917,10 +996,10 @@
 <body class="page-body">
     <a href="../index.html" class="back-button">Back to Poop</a>
 
-    <div class="page-container" style="max-width: 900px;">
+    <div class="page-container">
         <h1 class="page-title">Watch the Game</h1>
 
-        <div class="content-box" style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 0;">
+        <div class="content-box">
             <div class="stadium-container">
                 <!-- Scoreboard -->
                 <div class="scoreboard">
