@@ -22,6 +22,7 @@
             background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 30%, #FFE066 30%, #FFCC00 100%);
             touch-action: none;
             cursor: pointer;
+            box-shadow: 0 14px 30px rgba(139,69,19,0.25);
         }
 
         @media (max-width: 600px) {
@@ -46,6 +47,12 @@
             width: 100%;
             height: 70%;
             background: linear-gradient(to bottom, #FFE066 0%, #FFCC00 50%, #FFB800 100%);
+            animation: river-shift 6s ease-in-out infinite;
+        }
+
+        @keyframes river-shift {
+            0%, 100% { filter: saturate(1); }
+            50% { filter: saturate(1.15) brightness(1.05); }
         }
 
         .wave {
@@ -101,6 +108,15 @@
             animation: sparkle 0.5s ease-in-out infinite alternate;
         }
 
+        .collectible.gem {
+            filter: drop-shadow(0 0 8px #ffffff);
+        }
+
+        .collectible.power {
+            animation-duration: 0.35s;
+            filter: drop-shadow(0 0 9px gold);
+        }
+
         @keyframes sparkle {
             0% { transform: scale(1); filter: brightness(1); }
             100% { transform: scale(1.1); filter: brightness(1.3); }
@@ -120,6 +136,7 @@
 
         .score-item {
             text-align: center;
+            min-width: 80px;
         }
 
         .score-label {
@@ -131,6 +148,10 @@
             font-size: 1.8rem;
             font-weight: bold;
             color: #8B4513;
+        }
+
+        .score-value.small {
+            font-size: 1.4rem;
         }
 
         .game-over-screen {
@@ -358,6 +379,21 @@
             background: rgba(255,215,0,0.3);
         }
 
+        .powerup-display {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.92);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-weight: 700;
+            color: #8B4513;
+            z-index: 120;
+            min-width: 180px;
+            text-align: center;
+        }
+
         .warning-flash {
             position: absolute;
             top: 0;
@@ -392,6 +428,25 @@
         .combo-display.active {
             opacity: 1;
             animation: combo-bounce 0.3s ease-out;
+        }
+
+        .cheer-message {
+            position: absolute;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255,255,255,0.92);
+            color: #8B4513;
+            border-radius: 18px;
+            padding: 8px 16px;
+            font-weight: 800;
+            z-index: 120;
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+
+        .cheer-message.active {
+            opacity: 1;
         }
 
         @keyframes combo-bounce {
@@ -457,6 +512,14 @@
                     <div class="score-label">High Score</div>
                     <div class="score-value" id="highScore">0m</div>
                 </div>
+                <div class="score-item">
+                    <div class="score-label">Lives</div>
+                    <div class="score-value" id="lives">❤️❤️❤️</div>
+                </div>
+                <div class="score-item">
+                    <div class="score-label">Level</div>
+                    <div class="score-value small" id="level">1</div>
+                </div>
             </div>
 
             <p style="text-align: center; margin-bottom: 10px;">Choose your float:</p>
@@ -482,6 +545,8 @@
                 <div class="distance-display" id="distanceDisplay">0m</div>
                 <div class="coin-display" id="coinDisplay">🪙 0</div>
                 <div class="combo-display" id="comboDisplay">COMBO x2!</div>
+                <div class="cheer-message" id="cheerMessage">Awesome!</div>
+                <div class="powerup-display" id="powerupDisplay">Power: None</div>
 
                 <div class="height-indicator">
                     <div class="height-fill" id="heightFill" style="height: 50%;"></div>
@@ -520,6 +585,7 @@
                     <li>Release to sink down</li>
                     <li>Dodge the poop-infected animals!</li>
                     <li>Collect coins for bonus points</li>
+                    <li>Grab shields and magnets for special powers</li>
                 </ul>
             </div>
         </div>
@@ -533,7 +599,11 @@
         const coinsEl = document.getElementById('coins');
         const coinDisplay = document.getElementById('coinDisplay');
         const highScoreEl = document.getElementById('highScore');
+        const livesEl = document.getElementById('lives');
+        const levelEl = document.getElementById('level');
         const comboDisplay = document.getElementById('comboDisplay');
+        const cheerMessage = document.getElementById('cheerMessage');
+        const powerupDisplay = document.getElementById('powerupDisplay');
         const heightFill = document.getElementById('heightFill');
         const gameOverScreen = document.getElementById('gameOverScreen');
         const finalDistanceEl = document.getElementById('finalDistance');
@@ -548,8 +618,14 @@
         let velocity = 0;
         let distance = 0;
         let coins = 0;
+        let lives = 3;
+        let level = 1;
         let combo = 0;
         let lastCoinTime = 0;
+        let shieldTimer = 0;
+        let magnetTimer = 0;
+        let invincibleTimer = 0;
+        let nextMilestone = 100;
         let highScore = parseInt(localStorage.getItem('riverHighScore')) || 0;
         let currentFloat = '🛟';
         let obstacles = [];
@@ -557,13 +633,15 @@
         let gameSpeed = 3;
         let spawnTimer = 0;
         let coinSpawnTimer = 0;
+        let lastObstacleY = 180;
+        let cheerTimeout;
 
         // Physics
         const gravity = 0.35;
-        const boostPower = -5;
+        const boostPower = -4.8;
         const maxFallSpeed = 6;
         const minY = 30;  // Sky limit
-        const maxY = 380; // River bottom
+        let maxY = 340; // River bottom
 
         // Obstacle types
         const obstacleTypes = [
@@ -578,6 +656,9 @@
         ];
 
         highScoreEl.textContent = highScore + 'm';
+        livesEl.textContent = '❤️❤️❤️';
+        levelEl.textContent = '1';
+        updatePowerupDisplay();
 
         // Float selection
         document.querySelectorAll('.float-option').forEach(option => {
@@ -629,11 +710,15 @@
 
         startBtn.addEventListener('click', () => {
             if (!gameRunning) {
+                if (gameOverScreen.classList.contains('active')) {
+                    resetGame();
+                }
                 startGame();
             }
         });
 
         function startGame() {
+            maxY = gameContainer.clientHeight - 28;
             gameRunning = true;
             startMessage.style.display = 'none';
             gameOverScreen.classList.remove('active');
@@ -652,6 +737,7 @@
             updateDistance();
             spawnEntities();
             createBubbles();
+            updateTimers();
 
             requestAnimationFrame(gameLoop);
         }
@@ -676,15 +762,16 @@
             if (playerY < minY) {
                 playerY = minY;
                 velocity = 0;
-                hitBoundary();
+                if (!invincibleTimer) hitBoundary();
             }
             if (playerY > maxY) {
                 playerY = maxY;
                 velocity = 0;
-                hitBoundary();
+                if (!invincibleTimer) hitBoundary();
             }
 
             player.style.top = playerY + 'px';
+            player.style.opacity = invincibleTimer > 0 && Math.floor(Date.now() / 80) % 2 === 0 ? '0.55' : '1';
 
             // Update height indicator
             const heightPercent = 100 - ((playerY - minY) / (maxY - minY) * 100);
@@ -704,71 +791,112 @@
             coinSpawnTimer++;
 
             // Spawn obstacles - frequency increases with distance
-            const spawnRate = Math.max(60, 120 - Math.floor(distance / 50));
+            const spawnRate = Math.max(52, 110 - Math.floor(distance / 60));
             if (spawnTimer >= spawnRate) {
                 spawnTimer = 0;
                 spawnObstacle();
             }
 
-            // Spawn coins
-            if (coinSpawnTimer >= 80) {
+            // Spawn collectibles
+            if (coinSpawnTimer >= 70) {
                 coinSpawnTimer = 0;
-                if (Math.random() > 0.3) {
-                    spawnCoin();
+                if (Math.random() > 0.25) {
+                    spawnCollectible();
                 }
             }
         }
 
         function spawnObstacle() {
+            const gameWidth = gameContainer.clientWidth;
             const type = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
             const obstacle = document.createElement('div');
             obstacle.className = 'obstacle';
             obstacle.textContent = type.emoji;
-            obstacle.style.right = '-60px';
+            obstacle.style.left = gameWidth + 'px';
 
-            // Random Y position in river area
-            const y = 100 + Math.random() * 280;
+            // Keep spacing between obstacle heights so kids get fair lanes
+            let y = 85 + Math.random() * (gameContainer.clientHeight - 120);
+            if (Math.abs(y - lastObstacleY) < 55) {
+                y += y > lastObstacleY ? 65 : -65;
+            }
+            y = Math.max(80, Math.min(y, gameContainer.clientHeight - 50));
+            lastObstacleY = y;
             obstacle.style.top = y + 'px';
 
             gameContainer.appendChild(obstacle);
 
             obstacles.push({
                 element: obstacle,
-                x: 700,
+                x: gameWidth + 30,
                 y: y,
                 width: type.width,
                 height: type.height,
-                speed: gameSpeed + Math.random() * 2
+                speed: gameSpeed + Math.random() * 1.6 + (level * 0.08),
+                passed: false
             });
         }
 
-        function spawnCoin() {
-            const coin = document.createElement('div');
-            coin.className = 'collectible';
-            coin.textContent = '🪙';
-            coin.style.right = '-40px';
+        function spawnCollectible() {
+            const gameWidth = gameContainer.clientWidth;
+            const collectible = document.createElement('div');
+            collectible.className = 'collectible';
+            let kind = 'coin';
+            let value = 1;
 
-            const y = 80 + Math.random() * 300;
-            coin.style.top = y + 'px';
+            const rand = Math.random();
+            if (rand > 0.92) {
+                collectible.textContent = '🛡️';
+                collectible.classList.add('power');
+                kind = 'shield';
+                value = 0;
+            } else if (rand > 0.84) {
+                collectible.textContent = '🧲';
+                collectible.classList.add('power');
+                kind = 'magnet';
+                value = 0;
+            } else if (rand > 0.70) {
+                collectible.textContent = '✨';
+                collectible.classList.add('gem');
+                kind = 'gem';
+                value = 3;
+            } else {
+                collectible.textContent = '🪙';
+            }
 
-            gameContainer.appendChild(coin);
+            collectible.style.left = gameWidth + 'px';
+            const y = 75 + Math.random() * (gameContainer.clientHeight - 110);
+            collectible.style.top = y + 'px';
+            gameContainer.appendChild(collectible);
 
             collectibles.push({
-                element: coin,
-                x: 700,
+                element: collectible,
+                x: gameWidth + 20,
                 y: y,
                 width: 30,
-                height: 30
+                height: 30,
+                kind: kind,
+                value: value
             });
         }
 
         function updateObstacles() {
-            const currentSpeed = gameSpeed + (distance / 200);
+            const playerX = 90;
 
             for (let i = obstacles.length - 1; i >= 0; i--) {
                 const obs = obstacles[i];
                 obs.x -= obs.speed + (distance / 300);
-                obs.element.style.right = (700 - obs.x) + 'px';
+                obs.element.style.left = obs.x + 'px';
+
+                if (!obs.passed && obs.x + obs.width < playerX) {
+                    obs.passed = true;
+                    // Near miss bonus when obstacle passes close
+                    if (Math.abs(obs.y - playerY) < 45) {
+                        coins += 1;
+                        coinsEl.textContent = '🪙 ' + coins;
+                        coinDisplay.textContent = '🪙 ' + coins;
+                        showCheer('Near Miss +1🪙');
+                    }
+                }
 
                 // Remove if off screen
                 if (obs.x < -60) {
@@ -779,10 +907,22 @@
         }
 
         function updateCollectibles() {
+            const playerCenterX = 100;
+            const playerCenterY = playerY + 20;
+
             for (let i = collectibles.length - 1; i >= 0; i--) {
                 const col = collectibles[i];
                 col.x -= gameSpeed + (distance / 300);
-                col.element.style.right = (700 - col.x) + 'px';
+
+                if (magnetTimer > 0 && (col.kind === 'coin' || col.kind === 'gem')) {
+                    const dx = playerCenterX - col.x;
+                    const dy = playerCenterY - col.y;
+                    col.x += dx * 0.03;
+                    col.y += dy * 0.03;
+                }
+
+                col.element.style.left = col.x + 'px';
+                col.element.style.top = col.y + 'px';
 
                 // Remove if off screen
                 if (col.x < -40) {
@@ -796,9 +936,9 @@
             // Smaller hitbox for player (more forgiving)
             const playerRect = {
                 left: 90,
-                right: 110,
+                right: 120,
                 top: playerY + 10,
-                bottom: playerY + 30
+                bottom: playerY + 36
             };
 
             // Check obstacle collisions (smaller hitboxes)
@@ -811,7 +951,7 @@
                 };
 
                 if (rectsCollide(playerRect, obsRect)) {
-                    gameOver();
+                    onObstacleHit(obs);
                     return;
                 }
             }
@@ -827,7 +967,7 @@
                 };
 
                 if (rectsCollide(playerRect, colRect)) {
-                    collectCoin(col, i);
+                    collectItem(col, i);
                 }
             }
         }
@@ -839,7 +979,25 @@
                    a.bottom > b.top;
         }
 
-        function collectCoin(col, index) {
+        function collectItem(col, index) {
+            if (col.kind === 'shield') {
+                shieldTimer = 420;
+                showCheer('Shield On! 🛡️');
+                updatePowerupDisplay();
+                col.element.remove();
+                collectibles.splice(index, 1);
+                return;
+            }
+
+            if (col.kind === 'magnet') {
+                magnetTimer = 420;
+                showCheer('Coin Magnet! 🧲');
+                updatePowerupDisplay();
+                col.element.remove();
+                collectibles.splice(index, 1);
+                return;
+            }
+
             // Combo system
             const now = Date.now();
             if (now - lastCoinTime < 2000) {
@@ -854,14 +1012,14 @@
             }
             lastCoinTime = now;
 
-            coins += combo;
+            coins += col.value * combo;
             coinsEl.textContent = '🪙 ' + coins;
             coinDisplay.textContent = '🪙 ' + coins;
 
             // Splash effect
             const splash = document.createElement('div');
             splash.className = 'splash-effect';
-            splash.textContent = '+' + combo + '🪙';
+            splash.textContent = '+' + (col.value * combo) + '🪙';
             splash.style.left = col.x + 'px';
             splash.style.top = col.y + 'px';
             gameContainer.appendChild(splash);
@@ -876,9 +1034,16 @@
             const displayDist = Math.floor(distance);
             distanceEl.textContent = displayDist + 'm';
             distanceDisplay.textContent = displayDist + 'm';
+            level = 1 + Math.floor(displayDist / 80);
+            levelEl.textContent = level;
 
             // Increase game speed over time
-            gameSpeed = 3 + (distance / 100);
+            gameSpeed = 3 + (distance / 140);
+
+            if (displayDist >= nextMilestone) {
+                showCheer(`Wow! ${nextMilestone}m!`);
+                nextMilestone += 100;
+            }
         }
 
         function createBubbles() {
@@ -923,6 +1088,56 @@
             startBtn.disabled = false;
         }
 
+        function onObstacleHit(obs) {
+            if (invincibleTimer > 0) return;
+            obs.element.remove();
+            obstacles = obstacles.filter(item => item !== obs);
+
+            if (shieldTimer > 0) {
+                shieldTimer = 0;
+                updatePowerupDisplay();
+                showCheer('Shield blocked it!');
+                invincibleTimer = 45;
+                return;
+            }
+
+            lives -= 1;
+            livesEl.textContent = '❤️'.repeat(Math.max(0, lives));
+            hitBoundary();
+            showCheer(`Ouch! ${lives} life${lives === 1 ? '' : 's'} left`);
+            invincibleTimer = 70;
+
+            if (lives <= 0) {
+                gameOver();
+            }
+        }
+
+        function updateTimers() {
+            if (invincibleTimer > 0) invincibleTimer--;
+            if (shieldTimer > 0) shieldTimer--;
+            if (magnetTimer > 0) magnetTimer--;
+            updatePowerupDisplay();
+        }
+
+        function updatePowerupDisplay() {
+            if (shieldTimer > 0) {
+                powerupDisplay.textContent = `Power: Shield ${Math.ceil(shieldTimer / 60)}s`;
+                return;
+            }
+            if (magnetTimer > 0) {
+                powerupDisplay.textContent = `Power: Magnet ${Math.ceil(magnetTimer / 60)}s`;
+                return;
+            }
+            powerupDisplay.textContent = 'Power: None';
+        }
+
+        function showCheer(message) {
+            cheerMessage.textContent = message;
+            cheerMessage.classList.add('active');
+            clearTimeout(cheerTimeout);
+            cheerTimeout = setTimeout(() => cheerMessage.classList.remove('active'), 900);
+        }
+
         function resetGame() {
             // Clear obstacles and collectibles
             obstacles.forEach(obs => obs.element.remove());
@@ -935,20 +1150,33 @@
             velocity = 0;
             distance = 0;
             coins = 0;
+            lives = 3;
+            level = 1;
             combo = 0;
             gameSpeed = 3;
             spawnTimer = 0;
             coinSpawnTimer = 0;
+            shieldTimer = 0;
+            magnetTimer = 0;
+            invincibleTimer = 0;
+            nextMilestone = 100;
+            lastObstacleY = 180;
 
             // Reset displays
             distanceEl.textContent = '0m';
             distanceDisplay.textContent = '0m';
             coinsEl.textContent = '🪙 0';
             coinDisplay.textContent = '🪙 0';
+            livesEl.textContent = '❤️❤️❤️';
+            levelEl.textContent = '1';
+            comboDisplay.classList.remove('active');
+            cheerMessage.classList.remove('active');
+            updatePowerupDisplay();
 
             // Reset player position
             player.style.top = playerY + 'px';
             player.textContent = currentFloat;
+            player.style.opacity = '1';
         }
 
         // Initialize
