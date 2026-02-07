@@ -1556,13 +1556,14 @@
         const snakeStartBtn = document.getElementById('snakeStartBtn');
 
         const gridSize = 20;
-        let snake = [{ x: 200, y: 200 }];
+        let snake = [{ x: 140, y: 140 }];
         let food = { x: 100, y: 100 };
         let direction = { x: gridSize, y: 0 };
         let snakeScore = 0;
         let snakeHighScore = localStorage.getItem('snakeHighScore') || 0;
         let snakeGameLoop;
         let snakeRunning = false;
+        let snakeSpeed = 280; // Slower speed for kids (was 150)
 
         snakeHighScoreEl.textContent = snakeHighScore;
 
@@ -1627,13 +1628,14 @@
         }
 
         function startSnakeGame() {
-            snake = [{ x: 200, y: 200 }];
+            snake = [{ x: 140, y: 140 }];
             direction = { x: gridSize, y: 0 };
             snakeScore = 0;
+            snakeSpeed = 280; // Reset to slow speed
             snakeScoreEl.textContent = '0';
             snakeRunning = true;
             spawnFood();
-            snakeGameLoop = setInterval(moveSnake, 150);
+            snakeGameLoop = setInterval(moveSnake, snakeSpeed);
             snakeStartBtn.textContent = 'Playing...';
             snakeStartBtn.disabled = true;
         }
@@ -1641,7 +1643,7 @@
         function endSnakeGame() {
             clearInterval(snakeGameLoop);
             snakeRunning = false;
-            snakeStartBtn.textContent = 'Start Game';
+            snakeStartBtn.textContent = 'Play Again';
             snakeStartBtn.disabled = false;
 
             if (snakeScore > snakeHighScore) {
@@ -1650,7 +1652,18 @@
                 snakeHighScoreEl.textContent = snakeHighScore;
             }
 
-            alert(`Game Over! Score: ${snakeScore}`);
+            // Draw game over on canvas instead of alert
+            snakeCtx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            snakeCtx.fillRect(0, 0, snakeCanvas.width, snakeCanvas.height);
+            snakeCtx.fillStyle = '#FFD700';
+            snakeCtx.font = 'bold 28px Nunito, Arial';
+            snakeCtx.textAlign = 'center';
+            snakeCtx.fillText('Game Over!', snakeCanvas.width / 2, snakeCanvas.height / 2 - 20);
+            snakeCtx.fillStyle = '#fff';
+            snakeCtx.font = '20px Nunito, Arial';
+            snakeCtx.fillText(`Score: ${snakeScore}`, snakeCanvas.width / 2, snakeCanvas.height / 2 + 15);
+            snakeCtx.font = '16px Nunito, Arial';
+            snakeCtx.fillText('Tap Play Again!', snakeCanvas.width / 2, snakeCanvas.height / 2 + 45);
         }
 
         document.addEventListener('keydown', (e) => {
